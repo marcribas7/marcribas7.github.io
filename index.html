@@ -187,19 +187,6 @@
             border-radius: 2px;
         }
 
-        .hero-image::after {
-            content: '';
-            position: absolute;
-            bottom: -20px;
-            right: -20px;
-            width: 200px;
-            height: 200px;
-            border: 1px solid var(--accent-dim);
-            border-radius: 2px;
-            opacity: 0.3;
-            z-index: -1;
-        }
-
         /* ── SECTION SHARED ── */
         section {
             padding: 6rem 4rem;
@@ -701,7 +688,7 @@
     <h2 class="section-title fade-in">On the Court</h2>
     <div class="gallery-grid">
         <div class="gallery-item fade-in">
-            <img src="images/_DSC3577.JPG" alt="Marc Ribas courtside">
+            <img src="images/courtside.JPG" alt="Marc Ribas courtside">
             <div class="gallery-caption"><span>Courtside</span></div>
         </div>
         <div class="gallery-item fade-in">
@@ -723,29 +710,61 @@
 <section id="portfolio">
     <p class="section-label fade-in">Work</p>
     <h2 class="section-title fade-in">My Work</h2>
-    <div class="portfolio-grid">
+
+    <p class="section-label fade-in" style="margin-top: 1rem; font-size: 0.85rem; color: var(--text); letter-spacing: 0.08em;">⚡ Powered by AI</p>
+    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem;" class="fade-in">Interactive dashboards, data visualizations, and analytics tools built with AI assistance.</p>
+    <div class="portfolio-grid" style="margin-bottom: 4rem;">
         <a href="#" class="portfolio-card fade-in">
             <div class="portfolio-thumb">📊</div>
             <div class="portfolio-info">
                 <p class="portfolio-type">Interactive Dashboard</p>
-                <p class="portfolio-name">Team Scouting Report</p>
+                <p class="portfolio-name">Team Scouting Dashboard</p>
                 <p class="portfolio-desc">Interactive HTML scouting dashboard with advanced stats and visualizations.</p>
             </div>
         </a>
         <a href="#" class="portfolio-card fade-in">
+            <div class="portfolio-thumb">📈</div>
+            <div class="portfolio-info">
+                <p class="portfolio-type">Data Visualization</p>
+                <p class="portfolio-name">Player Comparison Tool</p>
+                <p class="portfolio-desc">AI-powered interactive player evaluation and comparison system.</p>
+            </div>
+        </a>
+        <a href="#" class="portfolio-card fade-in">
+            <div class="portfolio-thumb">🤖</div>
+            <div class="portfolio-info">
+                <p class="portfolio-type">Analytics Tool</p>
+                <p class="portfolio-name">Shot Chart Analysis</p>
+                <p class="portfolio-desc">Interactive shot chart with heat maps and efficiency breakdowns.</p>
+            </div>
+        </a>
+    </div>
+
+    <p class="section-label fade-in" style="margin-top: 1rem; font-size: 0.85rem; color: var(--text); letter-spacing: 0.08em;">🏀 Traditional Coaching</p>
+    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem;" class="fade-in">Game plans, scouting reports, and individual player evaluations.</p>
+    <div class="portfolio-grid">
+        <a href="#" class="portfolio-card fade-in">
             <div class="portfolio-thumb">📋</div>
             <div class="portfolio-info">
-                <p class="portfolio-type">Analysis Report</p>
-                <p class="portfolio-name">Game Analysis Breakdown</p>
-                <p class="portfolio-desc">Detailed post-game analysis with play-by-play breakdowns and shot charts.</p>
+                <p class="portfolio-type">Scouting Report</p>
+                <p class="portfolio-name">Team Scouting Report</p>
+                <p class="portfolio-desc">Comprehensive opponent scouting with tendencies, key actions, and defensive schemes.</p>
             </div>
         </a>
         <a href="#" class="portfolio-card fade-in">
             <div class="portfolio-thumb">🎯</div>
             <div class="portfolio-info">
-                <p class="portfolio-type">Scouting Tool</p>
-                <p class="portfolio-name">Player Evaluation System</p>
-                <p class="portfolio-desc">Custom player evaluation and comparison tool for recruitment decisions.</p>
+                <p class="portfolio-type">Game Plan</p>
+                <p class="portfolio-name">Pre-Game Strategy</p>
+                <p class="portfolio-desc">Full game plan with offensive and defensive adjustments for specific matchups.</p>
+            </div>
+        </a>
+        <a href="#" class="portfolio-card fade-in">
+            <div class="portfolio-thumb">👤</div>
+            <div class="portfolio-info">
+                <p class="portfolio-type">Individual Report</p>
+                <p class="portfolio-name">Player Development Report</p>
+                <p class="portfolio-desc">Detailed individual player evaluation with strengths, weaknesses, and development plan.</p>
             </div>
         </a>
     </div>
