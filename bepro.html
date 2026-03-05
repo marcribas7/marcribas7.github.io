@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be Pro — Skills Camp | Marc Ribas Vilanova</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fafaf8;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f5f5f2;
+            --text: #1a1a1a;
+            --text-muted: #6b6b6b;
+            --accent: #b8922e;
+            --accent-dim: #d4a843;
+            --border: #e2e0db;
+            --serif: 'Instrument Serif', Georgia, serif;
+            --sans: 'DM Sans', -apple-system, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(250,250,248,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+            font-family: var(--serif);
+            font-size: 1.25rem;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-logo span { color: var(--accent); }
+
+        .nav-links { display: flex; gap: 2rem; }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--accent); }
+        .nav-links a.active { color: var(--accent); }
+
+        /* ── HERO ── */
+        .bp-hero {
+            min-height: 80vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            padding: 8rem 4rem 4rem;
+            gap: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bp-hero::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212,168,67,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .bp-hero-text h1 {
+            font-family: var(--serif);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.5rem;
+        }
+
+        .bp-hero-text h1 em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .bp-hero-subtitle {
+            font-size: 1rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .bp-hero-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            max-width: 500px;
+            line-height: 1.75;
+            margin-bottom: 2.5rem;
+        }
+
+        .bp-hero-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bp-hero-logo img {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            border-radius: 3px;
+            object-fit: cover;
+        }
+
+        /* ── GALLERY ── */
+        #bp-gallery {
+            border-top: 1px solid var(--border);
+        }
+
+        .bp-gallery-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            grid-template-rows: 280px 280px;
+            gap: 0.75rem;
+        }
+
+        .bp-gallery-item {
+            overflow: hidden;
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .bp-gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease, filter 0.6s;
+            filter: grayscale(15%);
+        }
+
+        .bp-gallery-item:hover img {
+            transform: scale(1.05);
+            filter: grayscale(0%);
+        }
+
+        .bp-gallery-item:first-child {
+            grid-row: 1 / 3;
+        }
+
+        .bp-gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.25rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .bp-gallery-item:hover .bp-gallery-caption { opacity: 1; }
+
+        .bp-gallery-caption span {
+            font-size: 0.7rem;
+            color: #fff;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* ── SECTIONS ── */
+        section {
+            padding: 6rem 4rem;
+        }
+
+        .section-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .section-title {
+            font-family: var(--serif);
+            font-size: clamp(2rem, 3.5vw, 3rem);
+            letter-spacing: -0.02em;
+            margin-bottom: 3rem;
+            line-height: 1.1;
+        }
+
+        /* ── PHILOSOPHY ── */
+        #philosophy {
+            border-top: 1px solid var(--border);
+            background: linear-gradient(180deg, rgba(212,168,67,0.04) 0%, transparent 50%);
+        }
+
+        .philosophy-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .philosophy-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 2rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .philosophy-card:hover {
+            border-color: var(--accent-dim);
+            transform: translateY(-2px);
+        }
+
+        .philosophy-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .philosophy-card:hover::before { opacity: 1; }
+
+        .philosophy-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .philosophy-card h3 {
+            font-family: var(--serif);
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .philosophy-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ── PROGRAM ── */
+        #program {
+            border-top: 1px solid var(--border);
+        }
+
+        .program-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .program-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .program-card:hover {
+            border-color: var(--accent-dim);
+            transform: translateY(-2px);
+        }
+
+        .program-label {
+            font-size: 0.65rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        .program-card h3 {
+            font-family: var(--serif);
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .program-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ── AUDIENCE ── */
+        #audience {
+            border-top: 1px solid var(--border);
+            background: linear-gradient(180deg, rgba(212,168,67,0.04) 0%, transparent 50%);
+        }
+
+        .audience-text {
+            max-width: 700px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .audience-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .audience-tag {
+            padding: 0.5rem 1.2rem;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 0.03em;
+        }
+
+        .audience-tag.accent {
+            border-color: var(--accent-dim);
+            color: var(--accent);
+        }
+
+        /* ── CTA ── */
+        #cta {
+            border-top: 1px solid var(--border);
+            text-align: center;
+            padding: 8rem 4rem;
+        }
+
+        .cta-heading {
+            font-family: var(--serif);
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .cta-heading em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .cta-sub {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.9rem 2rem;
+            background: var(--accent);
+            color: var(--bg);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .cta-btn:hover {
+            background: var(--text);
+            transform: translateY(-1px);
+        }
+
+        .cta-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .cta-back {
+            display: block;
+            margin-top: 1.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        .cta-back:hover { color: var(--accent); }
+
+        /* ── FOOTER ── */
+        footer {
+            padding: 2rem 4rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        /* ── ANIMATIONS ── */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1024px) {
+            .bp-hero { grid-template-columns: 1fr; padding: 8rem 2rem 4rem; }
+            .bp-hero-logo { order: -1; }
+            .bp-hero-logo img { max-width: 280px; }
+            .philosophy-grid { grid-template-columns: 1fr; }
+            .program-grid { grid-template-columns: 1fr; }
+            .bp-gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 250px 250px 250px; }
+            .bp-gallery-item:first-child { grid-row: auto; }
+            section { padding: 4rem 2rem; }
+        }
+
+        @media (max-width: 640px) {
+            nav { padding: 1rem; }
+            .nav-links { gap: 1rem; }
+            .nav-links a { font-size: 0.7rem; }
+            .bp-hero { padding: 7rem 1.5rem 3rem; }
+            .bp-gallery-grid { grid-template-columns: 1fr; grid-template-rows: repeat(5, 250px); }
+            #cta { padding: 5rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <a href="index.html" class="nav-logo">Marc Ribas <span>.</span></a>
+    <div class="nav-links">
+        <a href="index.html#experience">Experience</a>
+        <a href="#" class="active">Be Pro</a>
+        <a href="index.html#portfolio">My Work</a>
+        <a href="index.html#contact">Contact</a>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="bp-hero">
+    <div class="bp-hero-text fade-in">
+        <h1>Be Pro<br><em>Skills Camp</em></h1>
+        <p class="bp-hero-subtitle">Founded by Marc Ribas Vilanova</p>
+        <p class="bp-hero-desc">
+            An intensive basketball skills camp in Spain dedicated to unlocking the full potential 
+            of young players. Built on professional-level coaching methodology, individual attention, 
+            and the belief that greatness is built through deliberate, focused work.
+        </p>
+    </div>
+    <div class="bp-hero-logo fade-in">
+        <img src="images/_DSC3577.JPG" alt="Marc Ribas coaching at Be Pro Skills Camp">
+    </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section id="philosophy">
+    <p class="section-label fade-in">Approach</p>
+    <h2 class="section-title fade-in">Training Philosophy</h2>
+    <div class="philosophy-grid">
+        <div class="philosophy-card fade-in">
+            <div class="philosophy-icon">🎯</div>
+            <h3>Individual Focus</h3>
+            <p>Every player gets a personalized development plan. No two athletes are the same — training 
+            shouldn't be either. We assess strengths, identify gaps, and build a roadmap for growth.</p>
+        </div>
+        <div class="philosophy-card fade-in">
+            <div class="philosophy-icon">📹</div>
+            <h3>Video-Driven</h3>
+            <p>Film sessions are a core part of the camp. Players learn to study their own game, understand 
+            positioning, and develop basketball IQ through real footage analysis — the same tools used at the 
+            professional level.</p>
+        </div>
+        <div class="philosophy-card fade-in">
+            <div class="philosophy-icon">🔁</div>
+            <h3>Repetition & Detail</h3>
+            <p>Skills are built through high-volume, intentional repetition. We break down every move 
+            to its fundamentals — footwork, angles, timing — and rebuild it with precision.</p>
+        </div>
+    </div>
+</section>
+
+<!-- PROGRAM -->
+<section id="program">
+    <p class="section-label fade-in">What We Train</p>
+    <h2 class="section-title fade-in">Program Areas</h2>
+    <div class="program-grid">
+        <div class="program-card fade-in">
+            <p class="program-label">On-Court</p>
+            <h3>Ball Handling & Finishing</h3>
+            <p>Advanced dribbling patterns, change of pace, contact finishes, and floater progressions. 
+            Building confidence with the ball under pressure.</p>
+        </div>
+        <div class="program-card fade-in">
+            <p class="program-label">On-Court</p>
+            <h3>Shooting Mechanics</h3>
+            <p>Form correction, catch-and-shoot rhythm, off-the-dribble shooting, and range extension. 
+            Every rep with purpose and feedback.</p>
+        </div>
+        <div class="program-card fade-in">
+            <p class="program-label">On-Court</p>
+            <h3>Footwork & Positioning</h3>
+            <p>Offensive and defensive footwork drills, post moves, pivoting, closeout technique, 
+            and spatial awareness on both ends of the floor.</p>
+        </div>
+        <div class="program-card fade-in">
+            <p class="program-label">Off-Court</p>
+            <h3>Basketball IQ & Film</h3>
+            <p>Video sessions to develop reading ability, decision-making, and understanding of professional-level 
+            concepts. Learning to see the game before it happens.</p>
+        </div>
+    </div>
+</section>
+
+<!-- AUDIENCE -->
+<section id="audience">
+    <p class="section-label fade-in">Who It's For</p>
+    <h2 class="section-title fade-in">Built for Young Players</h2>
+    <p class="audience-text fade-in">
+        Be Pro is designed for youth and development-age basketball players in Spain who are serious 
+        about improving their individual game. Whether you're trying to make a competitive team, 
+        earn a scholarship, or simply want to reach the next level — this camp is for players who 
+        are ready to put in the work.
+    </p>
+    <div class="audience-tags fade-in">
+        <span class="audience-tag accent">Youth Players</span>
+        <span class="audience-tag accent">Development Age</span>
+        <span class="audience-tag">Competitive Mindset</span>
+        <span class="audience-tag">Spain Based</span>
+        <span class="audience-tag">All Positions</span>
+    </div>
+</section>
+
+<!-- GALLERY -->
+<section id="bp-gallery">
+    <p class="section-label fade-in">Camp Life</p>
+    <h2 class="section-title fade-in">On the Court</h2>
+    <div class="bp-gallery-grid">
+        <div class="bp-gallery-item fade-in">
+            <img src="images/_DSC4097.jpg" alt="Be Pro coaching session">
+            <div class="bp-gallery-caption"><span>Coaching</span></div>
+        </div>
+        <div class="bp-gallery-item fade-in">
+            <img src="images/_DSC4121.jpg" alt="Player training at Be Pro">
+            <div class="bp-gallery-caption"><span>Skills Training</span></div>
+        </div>
+        <div class="bp-gallery-item fade-in">
+            <img src="images/_DSC3316.jpg" alt="Young players at Be Pro camp">
+            <div class="bp-gallery-caption"><span>Camp Session</span></div>
+        </div>
+        <div class="bp-gallery-item fade-in">
+            <img src="images/_DSC4295.JPG" alt="Coaches demonstrating on court">
+            <div class="bp-gallery-caption"><span>Demonstration</span></div>
+        </div>
+        <div class="bp-gallery-item fade-in">
+            <img src="images/_DSC4320.jpg" alt="Player development drill">
+            <div class="bp-gallery-caption"><span>Development</span></div>
+        </div>
+        <div class="bp-gallery-item fade-in">
+            <img src="images/_DSC4337.jpg" alt="Marc mentoring young players">
+            <div class="bp-gallery-caption"><span>Mentorship</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+    <p class="section-label fade-in">Get Started</p>
+    <h2 class="cta-heading fade-in">Ready to <em>Be Pro</em>?</h2>
+    <p class="cta-sub fade-in">
+        Get in touch to learn more about upcoming camp dates, locations, and how to sign up.
+    </p>
+    <a href="mailto:marcribasvilanova@gmail.com" class="cta-btn fade-in">
+        Contact Marc
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+    </a>
+    <a href="index.html" class="cta-back fade-in">← Back to Portfolio</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>© 2026 Marc Ribas Vilanova. All rights reserved.</p>
+</footer>
+
+<script>
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
