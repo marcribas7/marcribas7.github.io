@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>North Alabama Lions - Shot Quality Analytics</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #ECF0F1;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            color: #7F8C8D;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2C3E50;
+        }
+        
+        .metric-comparison {
+            font-size: 0.85em;
+            color: #95A5A6;
+            margin-top: 5px;
+        }
+        
+        .chart-container {
+            margin: 20px 0;
+            background: #FAFAFA;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            color: #2C3E50;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #E74C3C;
+        }
+        
+        .legend-item {
+            display: inline-block;
+            margin-right: 20px;
+            font-size: 0.9em;
+        }
+        
+        .legend-color {
+            display: inline-block;
+            width: 20px;
+            height: 12px;
+            margin-right: 5px;
+            border-radius: 3px;
+        }
+        
+        .insights-box {
+            background: #FFF9E6;
+            border-left: 5px solid #F39C12;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 5px;
+        }
+        
+        .insights-title {
+            font-weight: bold;
+            color: #E67E22;
+            margin-bottom: 10px;
+        }
+        
+        .insight-item {
+            margin: 8px 0;
+            color: #7F8C8D;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏀 North Alabama Lions</h1>
+            <div class="subtitle">Shot Quality Analytics Dashboard - Atlantic Sun Conference 2025-26</div>
+        </div>
+        
+        <div class="content">
+            <!-- Key Metrics Cards -->
+            <div class="metrics-grid" id="metricsGrid">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            
+            <!-- Scatter Plot -->
+            <h2 class="section-title">Shot Quality Performance Analysis</h2>
+            <div class="chart-container">
+                <div id="scatterPlot"></div>
+            </div>
+            
+            <!-- Bar Charts -->
+            <h2 class="section-title">Comparative Analysis</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="chart-container">
+                    <div id="distributionChart"></div>
+                </div>
+                <div class="chart-container">
+                    <div id="efficiencyChart"></div>
+                </div>
+            </div>
+            
+            <!-- Rankings -->
+            <h2 class="section-title">Conference Rankings</h2>
+            <div class="chart-container">
+                <div id="rankingsChart"></div>
+            </div>
+            
+            <!-- Key Insights -->
+            <div class="insights-box">
+                <div class="insights-title">📊 Key Insights</div>
+                <div id="insightsContent">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Data for North Alabama Lions
+        const naData = {
+            low: { time: 0.169, pts: 4.8, ppp: 0.421, fg: 0.211, fg3: 0.000 },
+            medium: { time: 0.605, pts: 34.6, ppp: 0.848, fg: 0.348, fg3: 0.250 },
+            high: { time: 0.226, pts: 18.2, ppp: 1.197, fg: 0.579, fg3: 0.333 }
+        };
+        
+        // League averages (calculated from the data)
+        const leagueAvg = {
+            low: { time: 0.164, ppp: 0.526, fg: 0.319 },
+            medium: { time: 0.598, ppp: 0.851, fg: 0.379 },
+            high: { time: 0.238, ppp: 1.234, fg: 0.636 }
+        };
+        
+        // Team data for scatter plot
+        const teamsData = {
+            low: [
+                {team: 'Austin Peay', fg: 0.366, ppp: 0.515},
+                {team: 'Bellarmine', fg: 0.275, ppp: 0.372},
+                {team: 'Central Arkansas', fg: 0.364, ppp: 0.548},
+                {team: 'Eastern Kentucky', fg: 0.303, ppp: 0.433},
+                {team: 'Florida Gulf Coast', fg: 0.240, ppp: 0.267},
+                {team: 'Jacksonville', fg: 0.317, ppp: 0.650},
+                {team: 'Kennesaw State', fg: 0.345, ppp: 0.640},
+                {team: 'Lipscomb', fg: 0.294, ppp: 0.532},
+                {team: 'North Alabama', fg: 0.211, ppp: 0.421},
+                {team: 'North Florida', fg: 0.432, ppp: 0.703},
+                {team: 'Queens', fg: 0.361, ppp: 0.594},
+                {team: 'Stetson', fg: 0.310, ppp: 0.512}
+            ],
+            medium: [
+                {team: 'Austin Peay', fg: 0.407, ppp: 0.838},
+                {team: 'Bellarmine', fg: 0.350, ppp: 0.519},
+                {team: 'Central Arkansas', fg: 0.416, ppp: 0.744},
+                {team: 'Eastern Kentucky', fg: 0.351, ppp: 0.619},
+                {team: 'Florida Gulf Coast', fg: 0.368, ppp: 0.489},
+                {team: 'Jacksonville', fg: 0.421, ppp: 1.055},
+                {team: 'Kennesaw State', fg: 0.413, ppp: 1.026},
+                {team: 'Lipscomb', fg: 0.391, ppp: 0.886},
+                {team: 'North Alabama', fg: 0.348, ppp: 0.848},
+                {team: 'North Florida', fg: 0.402, ppp: 0.978},
+                {team: 'Queens', fg: 0.335, ppp: 0.858},
+                {team: 'Stetson', fg: 0.380, ppp: 1.062}
+            ],
+            high: [
+                {team: 'Austin Peay', fg: 0.695, ppp: 1.213},
+                {team: 'Bellarmine', fg: 0.481, ppp: 1.258},
+                {team: 'Central Arkansas', fg: 0.762, ppp: 1.417},
+                {team: 'Eastern Kentucky', fg: 0.624, ppp: 1.120},
+                {team: 'Florida Gulf Coast', fg: 0.722, ppp: 1.389},
+                {team: 'Jacksonville', fg: 0.729, ppp: 1.396},
+                {team: 'Kennesaw State', fg: 0.625, ppp: 1.094},
+                {team: 'Lipscomb', fg: 0.642, ppp: 1.089},
+                {team: 'North Alabama', fg: 0.579, ppp: 1.197},
+                {team: 'North Florida', fg: 0.566, ppp: 1.038},
+                {team: 'Queens', fg: 0.689, ppp: 1.311},
+                {team: 'Stetson', fg: 0.611, ppp: 1.250}
+            ]
+        };
+        
+        // Populate metrics cards
+        function createMetricsCards() {
+            const metricsGrid = document.getElementById('metricsGrid');
+            
+            const metrics = [
+                {
+                    label: 'High SSQ Efficiency',
+                    value: (naData.high.ppp).toFixed(3),
+                    comparison: `League: ${leagueAvg.high.ppp.toFixed(3)}`,
+                    color: naData.high.ppp > leagueAvg.high.ppp ? '#27AE60' : '#E74C3C'
+                },
+                {
+                    label: 'Medium SSQ Volume',
+                    value: (naData.medium.time * 100).toFixed(1) + '%',
+                    comparison: `League: ${(leagueAvg.medium.time * 100).toFixed(1)}%`,
+                    color: '#3498DB'
+                },
+                {
+                    label: 'High SSQ FG%',
+                    value: (naData.high.fg * 100).toFixed(1) + '%',
+                    comparison: `League: ${(leagueAvg.high.fg * 100).toFixed(1)}%`,
+                    color: naData.high.fg > leagueAvg.high.fg ? '#27AE60' : '#E74C3C'
+                },
+                {
+                    label: 'Points Per Game',
+                    value: (naData.low.pts + naData.medium.pts + naData.high.pts).toFixed(1),
+                    comparison: 'Total offensive output',
+                    color: '#9B59B6'
+                }
+            ];
+            
+            metrics.forEach(metric => {
+                const card = document.createElement('div');
+                card.className = 'metric-card';
+                card.innerHTML = `
+                    <div class="metric-label">${metric.label}</div>
+                    <div class="metric-value" style="color: ${metric.color}">${metric.value}</div>
+                    <div class="metric-comparison">${metric.comparison}</div>
+                `;
+                metricsGrid.appendChild(card);
+            });
+        }
+        
+        // Create scatter plot
+        function createScatterPlot() {
+            const traces = [];
+            const colors = {low: '#FF6B6B', medium: '#4ECDC4', high: '#45B7D1'};
+            const sizes = {low: 10, medium: 14, high: 18};
+            
+            ['low', 'medium', 'high'].forEach(category => {
+                const categoryData = teamsData[category];
+                
+                // All teams except North Alabama
+                const otherTeams = categoryData.filter(t => t.team !== 'North Alabama');
+                traces.push({
+                    x: otherTeams.map(t => t.fg * 100),
+                    y: otherTeams.map(t => t.ppp),
+                    mode: 'markers',
+                    name: `${category.charAt(0).toUpperCase() + category.slice(1)} SSQ`,
+                    marker: {
+                        size: sizes[category],
+                        color: colors[category],
+                        opacity: 0.6,
+                        line: {color: 'white', width: 1}
+                    },
+                    text: otherTeams.map(t => t.team),
+                    hovertemplate: '%{text}<br>FG%%: %{x:.1f}%%<br>PPP: %{y:.3f}<extra></extra>'
+                });
+                
+                // North Alabama highlighted
+                const na = categoryData.find(t => t.team === 'North Alabama');
+                if (na) {
+                    traces.push({
+                        x: [na.fg * 100],
+                        y: [na.ppp],
+                        mode: 'markers+text',
+                        name: `NAL ${category.charAt(0).toUpperCase() + category.slice(1)}`,
+                        marker: {
+                            size: sizes[category] + 8,
+                            color: colors[category],
+                            line: {color: '#2C3E50', width: 3}
+                        },
+                        text: ['NAL'],
+                        textposition: 'top center',
+                        textfont: {size: 12, color: '#2C3E50', family: 'Arial Black'},
+                        hovertemplate: 'North Alabama<br>FG%%: %{x:.1f}%%<br>PPP: %{y:.3f}<extra></extra>'
+                    });
+                }
+            });
+            
+            const layout = {
+                title: 'Field Goal % vs Points Per Possession by Shot Quality',
+                xaxis: {
+                    title: 'Field Goal Percentage (%)',
+                    tickformat: '.0f',
+                    ticksuffix: '%',
+                    gridcolor: '#E0E0E0'
+                },
+                yaxis: {
+                    title: 'Points Per Possession',
+                    tickformat: '.2f',
+                    gridcolor: '#E0E0E0'
+                },
+                height: 500,
+                hovermode: 'closest',
+                showlegend: true,
+                legend: {
+                    x: 0.02,
+                    y: 0.98,
+                    bgcolor: 'rgba(255,255,255,0.9)',
+                    bordercolor: '#CCCCCC',
+                    borderwidth: 1
+                }
+            };
+            
+            Plotly.newPlot('scatterPlot', traces, layout, {responsive: true});
+        }
+        
+        // Create distribution chart
+        function createDistributionChart() {
+            const trace1 = {
+                x: ['Low SSQ', 'Medium SSQ', 'High SSQ'],
+                y: [naData.low.time * 100, naData.medium.time * 100, naData.high.time * 100],
+                name: 'North Alabama',
+                type: 'bar',
+                marker: {color: '#E74C3C'}
+            };
+            
+            const trace2 = {
+                x: ['Low SSQ', 'Medium SSQ', 'High SSQ'],
+                y: [leagueAvg.low.time * 100, leagueAvg.medium.time * 100, leagueAvg.high.time * 100],
+                name: 'League Average',
+                type: 'bar',
+                marker: {color: '#95A5A6'}
+            };
+            
+            const layout = {
+                title: 'Shot Distribution (% of Possessions)',
+                yaxis: {
+                    title: '% of Possessions',
+                    tickformat: '.1f',
+                    ticksuffix: '%'
+                },
+                barmode: 'group',
+                height: 350
+            };
+            
+            Plotly.newPlot('distributionChart', [trace1, trace2], layout, {responsive: true});
+        }
+        
+        // Create efficiency chart
+        function createEfficiencyChart() {
+            const trace1 = {
+                x: ['Low SSQ', 'Medium SSQ', 'High SSQ'],
+                y: [naData.low.ppp, naData.medium.ppp, naData.high.ppp],
+                name: 'North Alabama',
+                type: 'bar',
+                marker: {color: '#E74C3C'},
+                text: [naData.low.ppp.toFixed(3), naData.medium.ppp.toFixed(3), naData.high.ppp.toFixed(3)],
+                textposition: 'outside'
+            };
+            
+            const trace2 = {
+                x: ['Low SSQ', 'Medium SSQ', 'High SSQ'],
+                y: [leagueAvg.low.ppp, leagueAvg.medium.ppp, leagueAvg.high.ppp],
+                name: 'League Average',
+                type: 'bar',
+                marker: {color: '#95A5A6'},
+                text: [leagueAvg.low.ppp.toFixed(3), leagueAvg.medium.ppp.toFixed(3), leagueAvg.high.ppp.toFixed(3)],
+                textposition: 'outside'
+            };
+            
+            const layout = {
+                title: 'Points Per Possession by Shot Quality',
+                yaxis: {
+                    title: 'Points Per Possession',
+                    tickformat: '.2f'
+                },
+                barmode: 'group',
+                height: 350
+            };
+            
+            Plotly.newPlot('efficiencyChart', [trace1, trace2], layout, {responsive: true});
+        }
+        
+        // Create rankings chart
+        function createRankingsChart() {
+            // Calculate rankings
+            const rankings = {
+                low: { ppp: 10, fg: 12 },  // Out of 12 teams
+                medium: { ppp: 7, fg: 10 },
+                high: { ppp: 8, fg: 10 }
+            };
+            
+            const trace = {
+                type: 'table',
+                header: {
+                    values: [['<b>Shot Quality</b>'], ['<b>PPP Rank</b>'], ['<b>FG% Rank</b>'], 
+                            ['<b>PPP Value</b>'], ['<b>FG% Value</b>']],
+                    align: 'center',
+                    line: {width: 1, color: '#2C3E50'},
+                    fill: {color: '#34495E'},
+                    font: {family: "Arial", size: 14, color: "white"}
+                },
+                cells: {
+                    values: [
+                        ['Low SSQ', 'Medium SSQ', 'High SSQ'],
+                        [`${rankings.low.ppp}/12`, `${rankings.medium.ppp}/12`, `${rankings.high.ppp}/12`],
+                        [`${rankings.low.fg}/12`, `${rankings.medium.fg}/12`, `${rankings.high.fg}/12`],
+                        [naData.low.ppp.toFixed(3), naData.medium.ppp.toFixed(3), naData.high.ppp.toFixed(3)],
+                        [(naData.low.fg * 100).toFixed(1) + '%', (naData.medium.fg * 100).toFixed(1) + '%', 
+                         (naData.high.fg * 100).toFixed(1) + '%']
+                    ],
+                    align: 'center',
+                    line: {width: 1, color: '#BDC3C7'},
+                    fill: {color: ['#ECF0F1', '#FFFFFF', '#FFFFFF', '#ECF0F1', '#ECF0F1']},
+                    font: {family: "Arial", size: 12, color: "#2C3E50"},
+                    height: 35
+                }
+            };
+            
+            const layout = {
+                title: 'North Alabama Conference Rankings (out of 12 teams)',
+                height: 250
+            };
+            
+            Plotly.newPlot('rankingsChart', [trace], layout, {responsive: true});
+        }
+        
+        // Create insights
+        function createInsights() {
+            const insights = [
+                `<div class="insight-item">📍 <strong>Shot Selection:</strong> North Alabama takes 60.5% of shots from medium quality positions, slightly above league average (59.8%)</div>`,
+                `<div class="insight-item">⚠️ <strong>Low SSQ Concern:</strong> FG% on low quality shots (21.1%) is significantly below league average (31.9%), indicating need for better shot selection or execution</div>`,
+                `<div class="insight-item">📈 <strong>High SSQ Performance:</strong> While efficiency is solid (1.197 PPP), it's below league average (1.234 PPP), suggesting room for improvement</div>`,
+                `<div class="insight-item">🎯 <strong>Medium SSQ Strength:</strong> The team's bread and butter - comparable efficiency to league average with high volume</div>`,
+                `<div class="insight-item">🏀 <strong>3-Point Shooting:</strong> Struggles from beyond the arc in low SSQ situations (0.0%) but shows promise in high SSQ (33.3%)</div>`
+            ];
+            
+            document.getElementById('insightsContent').innerHTML = insights.join('');
+        }
+        
+        // Initialize all visualizations
+        createMetricsCards();
+        createScatterPlot();
+        createDistributionChart();
+        createEfficiencyChart();
+        createRankingsChart();
+        createInsights();
+    </script>
+</body>
+</html>

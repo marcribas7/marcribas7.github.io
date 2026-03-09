@@ -1,0 +1,1303 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEL Tournament Analysis: Round 1 vs Round 2 - Technical Director Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
+            margin-bottom: 30px;
+        }
+        
+        .tournament-info {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 20px;
+        }
+        
+        .tournament-round {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 20px 40px;
+            border-radius: 8px;
+        }
+        
+        .tournament-round .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .tournament-round .date {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .tournament-round .record {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f9f9f9;
+            border-bottom: 3px solid #e5e5e5;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #666;
+            background: #f9f9f9;
+            border: none;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background: #f0f0f0;
+            color: #667eea;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: -3px;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 40px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .methodology-section {
+            background: #f0f4ff;
+            border-left: 5px solid #667eea;
+            padding: 30px;
+            margin-bottom: 40px;
+            border-radius: 8px;
+        }
+        
+        .methodology-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .methodology-section p {
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .methodology-section ul {
+            margin-left: 25px;
+            margin-top: 10px;
+        }
+        
+        .methodology-section li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        
+        .executive-summary {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .executive-summary h3 {
+            color: #2d3436;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .summary-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .summary-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .summary-item p {
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .card.green {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .card.red {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .card h3 {
+            font-size: 0.95em;
+            opacity: 0.95;
+            margin-bottom: 15px;
+        }
+        
+        .card .value {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .card .change {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        .section h2 {
+            color: #1a1a1a;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #667eea;
+            font-size: 1.8em;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 450px;
+            margin-bottom: 40px;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .two-column-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .column {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 25px;
+        }
+        
+        .column.good {
+            border-top: 5px solid #22c55e;
+        }
+        
+        .column.bad {
+            border-top: 5px solid #ef4444;
+        }
+        
+        .column h3 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .column h3 .icon {
+            font-size: 1.3em;
+        }
+        
+        .item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .item-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #1a1a1a;
+        }
+        
+        .item-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .item-badge.good {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .item-badge.bad {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .item-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .item-stats .stat-label {
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+        }
+        
+        .item-note {
+            font-size: 0.75em;
+            color: #666;
+            font-style: italic;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #e5e5e5;
+        }
+        
+        .priority-list {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .priority-list h3 {
+            color: #856404;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+        
+        .priority-list ol {
+            margin-left: 20px;
+        }
+        
+        .priority-list li {
+            margin-bottom: 12px;
+            font-size: 1.05em;
+            line-height: 1.6;
+        }
+        
+        .priority-list strong {
+            color: #1a1a1a;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+        
+        .stat-box.good {
+            border-left-color: #22c55e;
+        }
+        
+        .stat-box.bad {
+            border-left-color: #ef4444;
+        }
+        
+        .stat-box .label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-box .value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+        
+        .pnr-note {
+            background: #e0e7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #1a1a1a;
+        }
+        
+        .insights-section {
+            background: #f9fafb;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+        
+        .insight-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .insight-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .insight-item.critical {
+            border-left-color: #ef4444;
+        }
+        
+        .insight-item.critical h4 {
+            color: #ef4444;
+        }
+        
+        .insight-item.success {
+            border-left-color: #22c55e;
+        }
+        
+        .insight-item.success h4 {
+            color: #22c55e;
+        }
+        
+        .insight-item p {
+            line-height: 1.7;
+            color: #333;
+        }
+        
+        .action-plan-section {
+            background: #f0fdf4;
+            border: 2px solid #22c55e;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 40px;
+        }
+        
+        .action-plan-section h3 {
+            color: #166534;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+        }
+        
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .action-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-top: 3px solid #22c55e;
+        }
+        
+        .action-item h4 {
+            color: #166534;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+        
+        .action-item ul {
+            margin-left: 20px;
+        }
+        
+        .action-item li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        
+        .minutes-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .minutes-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .minutes-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        
+        .minutes-table tr:hover {
+            background: #f9fafb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏀 MEL Tournament Analysis</h1>
+            <p class="subtitle">Technical Director Report: Round 1 vs Round 2 Defensive Performance</p>
+            
+            <div class="tournament-info">
+                <div class="tournament-round">
+                    <div class="label">Round 1</div>
+                    <div class="date">November 2025</div>
+                    <div class="record">4-0</div>
+                </div>
+                <div class="tournament-round">
+                    <div class="label">Round 2</div>
+                    <div class="date">February 2026</div>
+                    <div class="record">3-1</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('overview')">OVERVIEW</button>
+            <button class="tab" onclick="showTab('team')">TEAM</button>
+            <button class="tab" onclick="showTab('players')">PLAYERS</button>
+            <button class="tab" onclick="showTab('stats')">STATS COMPARISON</button>
+            <button class="tab" onclick="showTab('actionplan')">ACTION PLAN</button>
+        </div>
+        
+        <!-- OVERVIEW TAB -->
+        <div id="overview" class="tab-content active">
+            <div class="methodology-section">
+                <h3>📋 Methodology</h3>
+                <p><strong>Defensive Tracking System:</strong> Post-game video analysis of all defensive actions across 8+ core defensive concepts.</p>
+                <p><strong>Classification Criteria:</strong></p>
+                <ul>
+                    <li><strong>Good:</strong> Defensive concept executed correctly according to training principles</li>
+                    <li><strong>Bad:</strong> Defensive concept executed incorrectly or not applied when trained</li>
+                </ul>
+                <p><strong>Purpose:</strong> Identify specific defensive concepts requiring additional training focus and track individual/team progression over time.</p>
+                <p><strong>Defensive Concepts Tracked:</strong> 1on1 Defense, Full Court Defense, Off Ball Defense, PnR Defense (Blue/Red/Green variants), Team Defense, Activity, Box Out, Transition Defense (including Tag Up).</p>
+            </div>
+            
+            <div class="executive-summary">
+                <h3>📊 Executive Summary</h3>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <h4>Overall Team Performance</h4>
+                        <p>Marginal improvement: 37.6% → 38.4% success rate (+0.8pp). Volume increased significantly (255 → 375 actions, +47%).</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Major Improvements</h4>
+                        <p><strong>Transition D:</strong> +44.8pp (11.1% → 55.9%)<br>
+                        <strong>Activity:</strong> +32.6pp (33.3% → 65.9%)<br>
+                        <strong>1on1:</strong> +14.1pp (31.1% → 45.2%)</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Critical Regressions</h4>
+                        <p><strong>Full Court D:</strong> -29.3pp (53.7% → 24.4%)<br>
+                        <strong>PnR Blue:</strong> -58.9pp (87.5% → 28.6%)<br>
+                        <strong>PnR Overall:</strong> -24.3pp (76.0% → 51.7%)</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Individual Standouts</h4>
+                        <p><strong>Best:</strong> Ronja (+36.5pp improvement)<br>
+                        <strong>Concern:</strong> Alma (-17.1pp), Elisa (-11.6pp)<br>
+                        <strong>Limited data:</strong> Wilma (1 game - injury)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>🔍 Key Insights & Analysis</h2>
+                <div class="insights-section">
+                    <div class="insight-item critical">
+                        <h4>🚨 Full Court Defense Collapse (-29.3pp)</h4>
+                        <p><strong>Hypothesis:</strong> Insufficient full-court/three-quarter court training. Team has been training too many half-court concepts without adequate transition to full-court application. Need to balance practice distribution between half-court (technical) and full-court (game-realistic) scenarios.</p>
+                        <p><strong>Impact:</strong> 82 actions tracked in Round 2 with 75.6% error rate - our highest volume regressed concept.</p>
+                    </div>
+                    
+                    <div class="insight-item critical">
+                        <h4>🚨 PnR Blue Crisis (-58.9pp)</h4>
+                        <p><strong>Context Day 1:</strong> Opponent had a capable handler who could shoot pull-ups, exploiting our drop coverage. Guards struggled with getting caught on screens (bump on roll failure) and occasional miscommunication leading to collisions.</p>
+                        <p><strong>Technical Issues:</strong> Inconsistent "bump on roll" execution and guard coordination problems when defending ball screens.</p>
+                    </div>
+                    
+                    <div class="insight-item success">
+                        <h4>✅ Transition Defense Breakthrough (+44.8pp)</h4>
+                        <p><strong>Success Factor:</strong> Significant improvement driven primarily by Tag Up execution, which we've focused heavily on in recent training. Team went from 11.1% to 55.9% success - our biggest single improvement.</p>
+                        <p><strong>Volume:</strong> Increased from 9 to 34 tracked actions, showing both improved execution and increased recognition/application.</p>
+                    </div>
+                    
+                    <div class="insight-item success">
+                        <h4>✅ Ronja's Development (+36.5pp)</h4>
+                        <p><strong>Contributing Factors:</strong> Increased playing time and exposure (average 22.1 min/game Round 2). Executed trained concepts correctly with more consistency. Strong example of player development through increased opportunity and focused execution.</p>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <h4>⚠️ Alma & Elisa Regression</h4>
+                        <p><strong>Alma:</strong> -17.1pp (55.6% → 38.5% success). No specific external factors identified - requires individual attention.</p>
+                        <p><strong>Elisa:</strong> -11.6pp (29.4% → 17.8% success). Lowest overall success rate in Round 2 - significant concern requiring intervention.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TEAM TAB -->
+        <div id="team" class="tab-content">
+            <div class="summary-cards">
+                <div class="card">
+                    <h3>Round 1 Success Rate</h3>
+                    <div class="value">37.6%</div>
+                    <div class="change">255 defensive actions</div>
+                </div>
+                <div class="card green">
+                    <h3>Round 2 Success Rate</h3>
+                    <div class="value">38.4%</div>
+                    <div class="change">375 defensive actions</div>
+                </div>
+                <div class="card green">
+                    <h3>Overall Change</h3>
+                    <div class="value">+0.8pp</div>
+                    <div class="change">Marginal improvement</div>
+                </div>
+            </div>
+            
+            <div class="pnr-note">
+                <strong>📌 Note:</strong> PnR Defense (All) combines Blue, Red, and Green variants for overall assessment
+            </div>
+            
+            <div class="section">
+                <h2>📊 Concept Performance Comparison</h2>
+                <div class="chart-container">
+                    <canvas id="conceptChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="conceptChangeChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>✅ ❌ Concepts: What Got Better vs Worse</h2>
+                <div class="two-column-grid" id="conceptColumns"></div>
+            </div>
+            
+            <div class="priority-list">
+                <h3>🎯 Immediate Training Priorities</h3>
+                <ol>
+                    <li><strong>Full Court Defense</strong> - 75.6% error rate (24.4% success) | 82 actions | Highest priority</li>
+                    <li><strong>PnR Blue</strong> - 71.4% error rate (28.6% success) | 14 actions | Focus on bump and guard coordination</li>
+                    <li><strong>Off Ball Defense</strong> - 87.2% error rate (12.8% success) | 39 actions | Fundamental issue</li>
+                    <li><strong>PnR Red</strong> - 39.5% error rate (60.5% success) | 38 actions | Refinement needed</li>
+                </ol>
+            </div>
+        </div>
+        
+        <!-- PLAYERS TAB -->
+        <div id="players" class="tab-content">
+            <div class="section">
+                <h2>📈 Individual Player Progression</h2>
+                <div class="chart-container">
+                    <canvas id="playerChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="playerChangeChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>✅ ❌ Players: Who Improved vs Who Regressed</h2>
+                <div class="two-column-grid" id="playerColumns"></div>
+            </div>
+            
+            <div class="section">
+                <h2>⏱️ Playing Time Analysis</h2>
+                <table class="minutes-table">
+                    <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Round 1 Avg Min</th>
+                            <th>Round 2 Avg Min</th>
+                            <th>Change</th>
+                            <th>R2 Success Rate</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="minutesTableBody"></tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <h2>📊 Round 2 Final Success Rates</h2>
+                <div class="stat-grid" id="playerStatGrid"></div>
+            </div>
+        </div>
+        
+        <!-- STATS COMPARISON TAB -->
+        <div id="stats" class="tab-content">
+            <div class="section">
+                <h2>📊 Season Statistics Overview (MEL Tournament)</h2>
+                <p style="margin-bottom: 25px; color: #666; line-height: 1.6;">
+                    <strong>Complete season statistics</strong> combining Round 1 and Round 2 performance. 
+                    Highlighted metrics indicate areas of concern or excellence based on position-specific expectations.
+                </p>
+                
+                <div style="background: #f0f4ff; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                    <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.2em;">Key Metrics Explained:</h3>
+                    <ul style="margin-left: 25px; line-height: 1.8;">
+                        <li><strong>PPS (Point Per Shot):</strong> Points ÷ Field Goal Attempts - measures scoring efficiency per shot taken</li>
+                        <li><strong>AST/TO Ratio:</strong> Assists ÷ Turnovers - critical for playmakers (higher is better, >1.0 ideal)</li>
+                        <li><strong>(AST+STL)/TO Ratio:</strong> (Assists + Steals) ÷ Turnovers - measures positive plays vs turnovers (higher is better)</li>
+                    </ul>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table class="minutes-table" style="font-size: 0.9em;">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="vertical-align: middle;">Player</th>
+                                <th rowspan="2" style="vertical-align: middle;">G</th>
+                                <th rowspan="2" style="vertical-align: middle;">PPG</th>
+                                <th colspan="2" style="text-align: center; border-bottom: 1px solid #ddd;">Shooting</th>
+                                <th rowspan="2" style="vertical-align: middle;">3P%</th>
+                                <th rowspan="2" style="vertical-align: middle;">PPS</th>
+                                <th rowspan="2" style="vertical-align: middle;">RPG</th>
+                                <th rowspan="2" style="vertical-align: middle;">AST</th>
+                                <th rowspan="2" style="vertical-align: middle;">TO</th>
+                                <th rowspan="2" style="vertical-align: middle;">STL</th>
+                                <th colspan="2" style="text-align: center; border-bottom: 1px solid #ddd;">Ratios</th>
+                            </tr>
+                            <tr>
+                                <th style="border-top: 1px solid #ddd;">FGA</th>
+                                <th style="border-top: 1px solid #ddd;">FG%</th>
+                                <th style="border-top: 1px solid #ddd;">AST/TO</th>
+                                <th style="border-top: 1px solid #ddd;">(AST+STL)/TO</th>
+                            </tr>
+                        </thead>
+                        <tbody id="statsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>🔍 Statistical Insights</h2>
+                <div class="insights-section" id="statsInsights"></div>
+            </div>
+        </div>
+
+                <!-- ACTION PLAN TAB -->
+        <div id="actionplan" class="tab-content">
+            <div class="action-plan-section">
+                <h3>🎯 Action Plan for Final 4 MEL</h3>
+                <p style="margin-bottom: 20px; line-height: 1.7;">Based on data analysis, the following training priorities and realistic performance targets have been established for Final 4 MEL preparation.</p>
+                
+                <div class="action-grid">
+                    <div class="action-item">
+                        <h4>Priority 1: Full Court Defense</h4>
+                        <ul>
+                            <li><strong>Current:</strong> 24.4% success (75.6% error)</li>
+                            <li><strong>Target:</strong> 50% success rate</li>
+                            <li><strong>Focus:</strong> 3/4 court and full court drills</li>
+                            <li><strong>Schedule:</strong> Tuesday/Friday high-intensity sessions</li>
+                            <li><strong>Volume:</strong> Increase full-court reps significantly</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="action-item">
+                        <h4>Priority 2: Off Ball Defense</h4>
+                        <ul>
+                            <li><strong>Current:</strong> 12.8% success (87.2% error)</li>
+                            <li><strong>Target:</strong> 35% success rate</li>
+                            <li><strong>Focus:</strong> Help positioning, gap integrity, awareness</li>
+                            <li><strong>Schedule:</strong> All training sessions - fundamental</li>
+                            <li><strong>Emphasis:</strong> Off-screen defense techniques</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="action-item">
+                        <h4>Priority 3: PnR Defense (Blue)</h4>
+                        <ul>
+                            <li><strong>Current:</strong> 28.6% success (71.4% error)</li>
+                            <li><strong>Target:</strong> 60% success rate</li>
+                            <li><strong>Focus:</strong> Bump on roll technique, guard coordination</li>
+                            <li><strong>Drill:</strong> 3v3 and 4v4 drills with focus on the roll</li>
+                            <li><strong>Communication:</strong> Emphasize verbal calls</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="action-item">
+                        <h4>Priority 4: PnR Defense (Overall)</h4>
+                        <ul>
+                            <li><strong>Current:</strong> 51.7% success (48.3% error)</li>
+                            <li><strong>Target:</strong> 65% success rate</li>
+                            <li><strong>Focus:</strong> Scheme recognition (Blue/Red/Green)</li>
+                            <li><strong>Schedule:</strong> Monday half-court work</li>
+                            <li><strong>Adjustment:</strong> Prepare multiple coverages vs shooting threats</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="action-item">
+                        <h4>Individual Development</h4>
+                        <ul>
+                            <li><strong>Ronja:</strong> Maintain momentum, continue current approach</li>
+                            <li><strong>Alma:</strong> 1-on-1 video review, concept reinforcement</li>
+                            <li><strong>Elisa:</strong> Individual attention needed, simplified assignments</li>
+                            <li><strong>Rachael:</strong> Increase integration, build continuity</li>
+                            <li><strong>All:</strong> Data-driven feedback conversations</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="action-item">
+                        <h4>Training Structure</h4>
+                        <ul>
+                            <li><strong>Tuesday/Friday:</strong> High-intensity full-court work</li>
+                            <li><strong>Monday:</strong> Half-court technical concepts</li>
+                            <li><strong>Balance:</strong> 60% full-court, 40% half-court</li>
+                            <li><strong>Video:</strong> Pre/post-session concept review</li>
+                            <li><strong>Metrics:</strong> Continue tracking all concepts</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const playerData = {"Alma": {"nov_error": 44.4, "feb_error": 61.5, "nov_success": 55.6, "feb_success": 38.5, "change": 17.1, "nov_total": 18, "feb_total": 13, "note": null, "minutes_r1": 19.4, "minutes_r2": 19.56}, "Alva": {"nov_error": 66.7, "feb_error": 59.1, "nov_success": 33.3, "feb_success": 40.9, "change": -7.6, "nov_total": 30, "feb_total": 44, "note": null, "minutes_r1": 21.4, "minutes_r2": 24.27}, "Amanda": {"nov_error": 88.0, "feb_error": 74.4, "nov_success": 12.0, "feb_success": 25.6, "change": -13.6, "nov_total": 25, "feb_total": 39, "note": null, "minutes_r1": 18.2, "minutes_r2": 17.11}, "Elisa": {"nov_error": 70.6, "feb_error": 82.2, "nov_success": 29.4, "feb_success": 17.8, "change": 11.6, "nov_total": 17, "feb_total": 45, "note": null, "minutes_r1": 15.1, "minutes_r2": 18.0}, "Maleah": {"nov_error": 59.4, "feb_error": 65.2, "nov_success": 40.6, "feb_success": 34.8, "change": 5.8, "nov_total": 32, "feb_total": 46, "note": null, "minutes_r1": 21.5, "minutes_r2": 24.02}, "Ronja": {"nov_error": 70.8, "feb_error": 34.4, "nov_success": 29.2, "feb_success": 65.6, "change": -36.4, "nov_total": 24, "feb_total": 32, "note": null, "minutes_r1": 21.4, "minutes_r2": 22.12}, "Sasha": {"nov_error": 72.2, "feb_error": 55.3, "nov_success": 27.8, "feb_success": 44.7, "change": -16.9, "nov_total": 18, "feb_total": 47, "note": null, "minutes_r1": 15.9, "minutes_r2": 24.18}, "Signe": {"nov_error": 45.5, "feb_error": 48.4, "nov_success": 54.5, "feb_success": 51.6, "change": 2.9, "nov_total": 33, "feb_total": 62, "note": null, "minutes_r1": 20.4, "minutes_r2": 23.06}, "Wilma": {"nov_error": 50.0, "feb_error": 60.0, "nov_success": 50.0, "feb_success": 40.0, "change": 10.0, "nov_total": 32, "feb_total": 10, "note": "*Played only one game (injury)", "minutes_r1": 21.5, "minutes_r2": 22.45}, "Rachael": {"nov_error": 70.4, "feb_error": 75.7, "nov_success": 29.6, "feb_success": 24.3, "change": 5.3, "nov_total": 27, "feb_total": 37, "note": "*Baseline: EGBL Round 2 (Dec 2025)", "minutes_r1": 0, "minutes_r2": 17.21}};
+        const conceptData = {"1on1": {"nov_error": 70.7, "feb_error": 54.8, "nov_success": 29.3, "feb_success": 45.2, "change": -15.9, "nov_total": 41, "feb_total": 42}, "Activity": {"nov_error": 68.8, "feb_error": 34.1, "nov_success": 31.2, "feb_success": 65.9, "change": -34.7, "nov_total": 32, "feb_total": 44}, "Box Out": {"nov_error": 89.5, "feb_error": 82.5, "nov_success": 10.5, "feb_success": 17.5, "change": -7.0, "nov_total": 19, "feb_total": 40}, "Full Court D": {"nov_error": 46.0, "feb_error": 75.6, "nov_success": 54.0, "feb_success": 24.4, "change": 29.6, "nov_total": 50, "feb_total": 82}, "Off Ball": {"nov_error": 78.9, "feb_error": 87.2, "nov_success": 21.1, "feb_success": 12.8, "change": 8.3, "nov_total": 19, "feb_total": 39}, "Team D": {"nov_error": 64.5, "feb_error": 58.3, "nov_success": 35.5, "feb_success": 41.7, "change": -6.2, "nov_total": 31, "feb_total": 36}, "Transition D (incl. Tag Up)": {"nov_error": 88.9, "feb_error": 44.1, "nov_success": 11.1, "feb_success": 55.9, "change": -44.8, "nov_total": 9, "feb_total": 34}, "PnR Defense (All)": {"nov_error": 24.0, "feb_error": 48.3, "nov_success": 76.0, "feb_success": 51.7, "change": 24.3, "nov_total": 25, "feb_total": 58}, "PnR Blue": {"nov_error": 0.0, "feb_error": 71.4, "nov_success": 100.0, "feb_success": 28.6, "change": 71.4, "nov_total": 7, "feb_total": 14}, "PnR Red": {"nov_error": 33.3, "feb_error": 39.5, "nov_success": 66.7, "feb_success": 60.5, "change": 6.2, "nov_total": 18, "feb_total": 38}};
+        const improvedPlayers = ["Ronja", "Sasha", "Amanda", "Alva"];
+        const regressedPlayers = ["Alma", "Elisa", "Wilma", "Maleah", "Rachael"];
+        const improvedConcepts = ["Transition D (incl. Tag Up)", "Activity", "1on1", "Box Out", "Team D"];
+
+        // Player game stats data with turnovers and FG%
+        const playerGameStats = {
+            'Alva': { pos: 'guard', r1_ppg: 11.5, r1_fg: 50.0, r1_rpg: 3.3, r1_apg: 2.5, r1_to: 3.0, r2_ppg: 10.6, r2_fg: 52.4, r2_rpg: 2.1, r2_apg: 6.0, r2_to: 2.5 },
+            'Signe': { pos: 'guard', r1_ppg: 10.8, r1_fg: 33.3, r1_rpg: 2.0, r1_apg: 2.0, r1_to: 2.0, r2_ppg: 10.9, r2_fg: 54.3, r2_rpg: 1.5, r2_apg: 3.3, r2_to: 2.5 },
+            'Maleah': { pos: 'guard', r1_ppg: 13.0, r1_fg: 51.1, r1_rpg: 2.6, r1_apg: 3.0, r1_to: 2.5, r2_ppg: 13.9, r2_fg: 50.1, r2_rpg: 2.3, r2_apg: 2.3, r2_to: 3.0 },
+            'Wilma': { pos: 'guard', r1_ppg: 5.0, r1_fg: 37.5, r1_rpg: 3.3, r1_apg: 1.8, r1_to: 2.0, r2_ppg: 5.2, r2_fg: 38.9, r2_rpg: 4.0, r2_apg: 1.5, r2_to: 0.5 },
+            'Sasha': { pos: 'guard', r1_ppg: 11.3, r1_fg: 44.2, r1_rpg: 2.7, r1_apg: 4.7, r1_to: 3.0, r2_ppg: 13.4, r2_fg: 43.1, r2_rpg: 3.0, r2_apg: 2.8, r2_to: 2.3 },
+            'Amanda': { pos: 'wing', r1_ppg: 4.5, r1_fg: 45.5, r1_rpg: 1.0, r1_apg: 0.3, r1_to: 1.5, r2_ppg: 3.8, r2_fg: 52.1, r2_rpg: 1.8, r2_apg: 2.8, r2_to: 1.5 },
+            'Elisa': { pos: 'big', r1_ppg: 8.0, r1_fg: 56.7, r1_rpg: 1.3, r1_apg: 1.3, r1_to: 2.0, r2_ppg: 9.0, r2_fg: 61.5, r2_rpg: 0.8, r2_apg: 2.0, r2_to: 2.0 },
+            'Rachael': { pos: 'big', r1_ppg: null, r1_fg: null, r1_rpg: null, r1_apg: null, r1_to: null, r2_ppg: 6.3, r2_fg: 38.9, r2_rpg: 2.3, r2_apg: 2.3, r2_to: 3.7 },
+            'Ronja': { pos: 'big', r1_ppg: 9.5, r1_fg: 71.4, r1_rpg: 3.3, r1_apg: 1.0, r1_to: 2.5, r2_ppg: 9.6, r2_fg: 68.2, r2_rpg: 4.8, r2_apg: 2.5, r2_to: 2.5 },
+            'Alma': { pos: 'big', r1_ppg: 6.8, r1_fg: 46.2, r1_rpg: 3.0, r1_apg: 1.5, r1_to: 1.8, r2_ppg: 4.6, r2_fg: 28.6, r2_rpg: 1.3, r2_apg: 1.3, r2_to: 1.7 }
+        };
+        
+        // Evaluation criteria by position
+        function evaluatePlayer(player, stats) {
+            const evals = [];
+            
+            if (stats.pos === 'guard') {
+                // Guards: Shooting efficiency, APG and TO control critical
+                if (stats.r2_fg >= 45) evals.push('Efficient shooter');
+                else if (stats.r2_fg <= 35) evals.push('Shooting struggles');
+                if (stats.r2_apg >= 3.0) evals.push('Good playmaking');
+                if (stats.r2_to <= 2.0) evals.push('Excellent ball security');
+                else if (stats.r2_to >= 3.0) evals.push('High turnovers');
+                if (stats.r2_ppg >= 10) evals.push('Scoring threat');
+            } else if (stats.pos === 'wing') {
+                // Wings: Versatility + efficiency
+                if (stats.r2_fg >= 45) evals.push('Efficient');
+                if (stats.r2_ppg >= 8) evals.push('Good scoring');
+                if (stats.r2_rpg >= 3) evals.push('Active on boards');
+                if (stats.r2_apg >= 2) evals.push('Good facilitator');
+            } else if (stats.pos === 'big') {
+                // Bigs: RPG critical, FG% should be high
+                if (stats.r2_fg >= 55) evals.push('High efficiency');
+                else if (stats.r2_fg <= 40) evals.push('Low efficiency');
+                if (stats.r2_rpg >= 4) evals.push('Strong rebounder');
+                else if (stats.r2_rpg <= 2) evals.push('Needs rebounding focus');
+                if (stats.r2_ppg >= 8) evals.push('Interior scoring');
+            }
+            
+            // General improvements/concerns
+            if (stats.r1_ppg !== null) {
+                const ppg_change = stats.r2_ppg - stats.r1_ppg;
+                const rpg_change = stats.r2_rpg - stats.r1_rpg;
+                const fg_change = stats.r2_fg - stats.r1_fg;
+                const to_change = stats.r2_to - stats.r1_to;
+                
+                if (ppg_change >= 2) evals.push('↑ Scoring');
+                if (rpg_change >= 1) evals.push('↑ Rebounding');
+                if (fg_change >= 5) evals.push('↑ Efficiency');
+                if (to_change <= -0.5) evals.push('↑ Ball security');
+                if (to_change >= 0.5) evals.push('↓ Ball security');
+            }
+            
+            return evals.length > 0 ? evals.join(', ') : 'Solid performance';
+        }
+        
+        // Team averages
+        const teamAvgR1 = { ppg: 81.8/10, rpg: 48.2/10, apg: 20.5/10 };
+        const teamAvgR2 = { ppg: 91.0/10, rpg: 53.8/10, apg: 21.8/10 };
+        
+        const regressedConcepts = ["PnR Blue", "Full Court D", "PnR Defense (All)", "Off Ball", "PnR Red"];
+        
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+        
+        // Concept charts
+        const conceptLabels = Object.keys(conceptData);
+        const conceptNovSuccess = conceptLabels.map(c => conceptData[c].nov_success);
+        const conceptFebSuccess = conceptLabels.map(c => conceptData[c].feb_success);
+        const conceptChanges = conceptLabels.map(c => -conceptData[c].change);
+        
+        new Chart(document.getElementById('conceptChart'), {
+            type: 'bar',
+            data: {
+                labels: conceptLabels.map(l => l.replace('Transition D (incl. Tag Up)', 'Trans D*').replace('PnR Defense (All)', 'PnR All*')),
+                datasets: [{
+                    label: 'Round 1 (Nov)',
+                    data: conceptNovSuccess,
+                    backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    borderWidth: 2
+                }, {
+                    label: 'Round 2 (Feb)',
+                    data: conceptFebSuccess,
+                    backgroundColor: 'rgba(245, 87, 108, 0.8)',
+                    borderColor: 'rgba(245, 87, 108, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { font: { size: 14 } } },
+                    title: { display: true, text: 'Success Rate by Concept (%)', font: { size: 16, weight: 'bold' } }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: 100, title: { display: true, text: 'Success Rate (%)' } }
+                }
+            }
+        });
+        
+        new Chart(document.getElementById('conceptChangeChart'), {
+            type: 'bar',
+            data: {
+                labels: conceptLabels.map(l => l.replace('Transition D (incl. Tag Up)', 'Trans D*').replace('PnR Defense (All)', 'PnR All*')),
+                datasets: [{
+                    label: 'Change in Success Rate',
+                    data: conceptChanges,
+                    backgroundColor: conceptChanges.map(c => c > 0 ? 'rgba(34, 197, 94, 0.8)' : 'rgba(239, 68, 68, 0.8)'),
+                    borderColor: conceptChanges.map(c => c > 0 ? 'rgba(34, 197, 94, 1)' : 'rgba(239, 68, 68, 1)'),
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Change in Success Rate (Positive = Better)', font: { size: 16, weight: 'bold' } }
+                },
+                scales: {
+                    y: { 
+                        title: { display: true, text: 'Change (percentage points)' },
+                        grid: { color: ctx => ctx.tick.value === 0 ? '#000' : '#e5e5e5' }
+                    }
+                }
+            }
+        });
+        
+        // Player charts
+        const playerLabels = Object.keys(playerData);
+        const playerNovSuccess = playerLabels.map(p => playerData[p].nov_success);
+        const playerFebSuccess = playerLabels.map(p => playerData[p].feb_success);
+        const playerChanges = playerLabels.map(p => -playerData[p].change);
+        
+        new Chart(document.getElementById('playerChart'), {
+            type: 'line',
+            data: {
+                labels: playerLabels,
+                datasets: [{
+                    label: 'Round 1 (Nov)',
+                    data: playerNovSuccess,
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 6,
+                    pointHoverRadius: 9
+                }, {
+                    label: 'Round 2 (Feb)',
+                    data: playerFebSuccess,
+                    borderColor: 'rgba(245, 87, 108, 1)',
+                    backgroundColor: 'rgba(245, 87, 108, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 6,
+                    pointHoverRadius: 9
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { font: { size: 14 } } },
+                    title: { display: true, text: 'Individual Success Rate (%)', font: { size: 16, weight: 'bold' } }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: 100, title: { display: true, text: 'Success Rate (%)' } }
+                }
+            }
+        });
+        
+        new Chart(document.getElementById('playerChangeChart'), {
+            type: 'bar',
+            data: {
+                labels: playerLabels,
+                datasets: [{
+                    label: 'Change in Success Rate',
+                    data: playerChanges,
+                    backgroundColor: playerChanges.map(c => c > 5 ? 'rgba(34, 197, 94, 0.8)' : (c < -5 ? 'rgba(239, 68, 68, 0.8)' : 'rgba(59, 130, 246, 0.8)')),
+                    borderColor: playerChanges.map(c => c > 5 ? 'rgba(34, 197, 94, 1)' : (c < -5 ? 'rgba(239, 68, 68, 1)' : 'rgba(59, 130, 246, 1)')),
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Change in Success Rate (Positive = Better)', font: { size: 16, weight: 'bold' } }
+                },
+                scales: {
+                    y: { 
+                        title: { display: true, text: 'Change (percentage points)' },
+                        grid: { color: ctx => ctx.tick.value === 0 ? '#000' : '#e5e5e5' }
+                    }
+                }
+            }
+        });
+        
+        // Concept columns
+        const conceptColumnsHTML = `
+            <div class="column good">
+                <h3><span class="icon">✅</span> Improved Concepts</h3>
+                ${improvedConcepts.map(concept => {
+                    const c = conceptData[concept];
+                    return `
+                        <div class="item">
+                            <div class="item-header">
+                                <span class="item-name">${concept}</span>
+                                <span class="item-badge good">${-c.change > 0 ? '+' : ''}${(-c.change).toFixed(1)}pp</span>
+                            </div>
+                            <div class="item-stats">
+                                <div><div class="stat-label">Round 1</div>${c.nov_success}% (${c.nov_total}x)</div>
+                                <div><div class="stat-label">Round 2</div>${c.feb_success}% (${c.feb_total}x)</div>
+                                <div><div class="stat-label">Change</div><span style="color: ${-c.change > 0 ? '#22c55e' : '#ef4444'}; font-weight: bold;">${-c.change > 0 ? '+' : ''}${(-c.change).toFixed(1)}pp</span></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            <div class="column bad">
+                <h3><span class="icon">❌</span> Regressed Concepts</h3>
+                ${regressedConcepts.map(concept => {
+                    const c = conceptData[concept];
+                    return `
+                        <div class="item">
+                            <div class="item-header">
+                                <span class="item-name">${concept}</span>
+                                <span class="item-badge bad">${-c.change > 0 ? '+' : ''}${(-c.change).toFixed(1)}pp</span>
+                            </div>
+                            <div class="item-stats">
+                                <div><div class="stat-label">Round 1</div>${c.nov_success}% (${c.nov_total}x)</div>
+                                <div><div class="stat-label">Round 2</div>${c.feb_success}% (${c.feb_total}x)</div>
+                                <div><div class="stat-label">Change</div><span style="color: ${-c.change > 0 ? '#22c55e' : '#ef4444'}; font-weight: bold;">${-c.change > 0 ? '+' : ''}${(-c.change).toFixed(1)}pp</span></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+        document.getElementById('conceptColumns').innerHTML = conceptColumnsHTML;
+        
+        // Player columns
+        const playerColumnsHTML = `
+            <div class="column good">
+                <h3><span class="icon">✅</span> Improved Players</h3>
+                ${improvedPlayers.map(player => {
+                    const p = playerData[player];
+                    return `
+                        <div class="item">
+                            <div class="item-header">
+                                <span class="item-name">${player}</span>
+                                <span class="item-badge good">${-p.change > 0 ? '+' : ''}${(-p.change).toFixed(1)}pp</span>
+                            </div>
+                            <div class="item-stats">
+                                <div><div class="stat-label">Round 1</div>${p.nov_success}%</div>
+                                <div><div class="stat-label">Round 2</div>${p.feb_success}%</div>
+                                <div><div class="stat-label">Change</div><span style="color: ${-p.change > 0 ? '#22c55e' : '#ef4444'}; font-weight: bold;">${-p.change > 0 ? '+' : ''}${(-p.change).toFixed(1)}pp</span></div>
+                            </div>
+                            ${p.note ? `<div class="item-note">${p.note}</div>` : ''}
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            <div class="column bad">
+                <h3><span class="icon">❌</span> Regressed Players</h3>
+                ${regressedPlayers.map(player => {
+                    const p = playerData[player];
+                    return `
+                        <div class="item">
+                            <div class="item-header">
+                                <span class="item-name">${player}</span>
+                                <span class="item-badge bad">${-p.change > 0 ? '+' : ''}${(-p.change).toFixed(1)}pp</span>
+                            </div>
+                            <div class="item-stats">
+                                <div><div class="stat-label">Round 1</div>${p.nov_success}%</div>
+                                <div><div class="stat-label">Round 2</div>${p.feb_success}%</div>
+                                <div><div class="stat-label">Change</div><span style="color: ${-p.change > 0 ? '#22c55e' : '#ef4444'}; font-weight: bold;">${-p.change > 0 ? '+' : ''}${(-p.change).toFixed(1)}pp</span></div>
+                            </div>
+                            ${p.note ? `<div class="item-note">${p.note}</div>` : ''}
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+        document.getElementById('playerColumns').innerHTML = playerColumnsHTML;
+        
+        // Minutes table
+        const minutesTableHTML = playerLabels.map(player => {
+            const p = playerData[player];
+            const minChange = p.minutes_r2 - p.minutes_r1;
+            const improved = p.change < -5;
+            const regressed = p.change > 5;
+            
+            return `
+                <tr>
+                    <td><strong>${player}</strong></td>
+                    <td>${p.minutes_r1.toFixed(1)}</td>
+                    <td>${p.minutes_r2.toFixed(1)}</td>
+                    <td>${minChange > 0 ? '+' : ''}${minChange.toFixed(1)}</td>
+                    <td style="color: ${improved ? '#22c55e' : (regressed ? '#ef4444' : '#666')}">${p.feb_success}%</td>
+                    <td style="font-size: 0.85em; color: #666;">${p.note || '-'}</td>
+                </tr>
+            `;
+        }).join('');
+        document.getElementById('minutesTableBody').innerHTML = minutesTableHTML;
+        
+        // Player stat grid
+        const playerStatGridHTML = playerLabels.map(player => {
+            const p = playerData[player];
+            const improved = p.change < -5;
+            const regressed = p.change > 5;
+            const boxClass = improved ? 'good' : (regressed ? 'bad' : '');
+            
+            return `
+                <div class="stat-box ${boxClass}">
+                    <div class="label">${player} - Round 2</div>
+                    <div class="value">${p.feb_success}%</div>
+                    ${p.note ? `<div style="font-size: 0.7em; color: #666; margin-top: 5px;">${p.note}</div>` : ''}
+                </div>
+            `;
+        }).join('');
+        document.getElementById('playerStatGrid').innerHTML = playerStatGridHTML;
+
+// Season stats data
+        const seasonStats = {"Maleah": {"games": 8, "ppg": 13.9, "fga": 8.1, "fg_pct": 50.8, "threes_pct": 31.0, "reb_o": 2.4, "reb_d": 2.8, "ast": 2.0, "to": 3.3, "stl": 2.0, "pos": "guard", "ast_to_ratio": 0.6, "ast_stl_to_ratio": 1.2, "pps": 1.7, "rpg": 5.2}, "Sasha": {"games": 7, "ppg": 13.4, "fga": 10.4, "fg_pct": 48.0, "threes_pct": 16.7, "reb_o": 2.3, "reb_d": 2.0, "ast": 2.6, "to": 4.0, "stl": 2.6, "pos": "guard", "ast_to_ratio": 0.7, "ast_stl_to_ratio": 1.3, "pps": 1.3, "rpg": 4.3}, "Signe": {"games": 8, "ppg": 10.9, "fga": 5.1, "fg_pct": 53.7, "threes_pct": 31.0, "reb_o": 2.0, "reb_d": 1.4, "ast": 1.9, "to": 2.4, "stl": 3.5, "pos": "guard", "ast_to_ratio": 0.8, "ast_stl_to_ratio": 2.3, "pps": 2.1, "rpg": 3.4}, "Alva": {"games": 8, "ppg": 10.6, "fga": 10.3, "fg_pct": 38.9, "threes_pct": 20.0, "reb_o": 1.0, "reb_d": 3.0, "ast": 5.0, "to": 4.0, "stl": 4.3, "pos": "guard", "ast_to_ratio": 1.3, "ast_stl_to_ratio": 2.3, "pps": 1.0, "rpg": 4.0}, "Ronja": {"games": 8, "ppg": 9.6, "fga": 5.9, "fg_pct": 63.8, "threes_pct": 0.0, "reb_o": 5.4, "reb_d": 3.9, "ast": 3.1, "to": 2.6, "stl": 1.9, "pos": "big", "ast_to_ratio": 1.2, "ast_stl_to_ratio": 1.9, "pps": 1.6, "rpg": 9.3}, "Elisa": {"games": 8, "ppg": 9.0, "fga": 6.6, "fg_pct": 52.8, "threes_pct": 23.1, "reb_o": 1.0, "reb_d": 1.8, "ast": 1.1, "to": 2.6, "stl": 1.9, "pos": "big", "ast_to_ratio": 0.4, "ast_stl_to_ratio": 1.2, "pps": 1.4, "rpg": 2.8}, "Rachael": {"games": 3, "ppg": 6.3, "fga": 6.7, "fg_pct": 35.0, "threes_pct": 0.0, "reb_o": 1.0, "reb_d": 2.3, "ast": 1.0, "to": 1.3, "stl": 3.0, "pos": "big", "ast_to_ratio": 0.8, "ast_stl_to_ratio": 3.1, "pps": 0.9, "rpg": 3.3}, "Wilma": {"games": 5, "ppg": 5.2, "fga": 3.6, "fg_pct": 33.3, "threes_pct": 33.3, "reb_o": 2.8, "reb_d": 4.4, "ast": 2.8, "to": 2.8, "stl": 2.0, "pos": "guard", "ast_to_ratio": 1.0, "ast_stl_to_ratio": 1.7, "pps": 1.4, "rpg": 7.2}, "Alma": {"games": 7, "ppg": 4.6, "fga": 3.9, "fg_pct": 48.2, "threes_pct": 0.0, "reb_o": 1.7, "reb_d": 4.4, "ast": 0.9, "to": 1.7, "stl": 0.7, "pos": "big", "ast_to_ratio": 0.5, "ast_stl_to_ratio": 0.9, "pps": 1.2, "rpg": 6.1}, "Amanda": {"games": 8, "ppg": 3.8, "fga": 2.8, "fg_pct": 45.5, "threes_pct": 15.4, "reb_o": 1.1, "reb_d": 2.4, "ast": 0.1, "to": 1.0, "stl": 1.0, "pos": "wing", "ast_to_ratio": 0.1, "ast_stl_to_ratio": 1.1, "pps": 1.4, "rpg": 3.5}};
+        
+        // Generate stats table
+        const statsTableHTML = Object.keys(seasonStats).map(player => {
+            const s = seasonStats[player];
+            
+            // Determine highlights
+            const fg_low = s.fg_pct < 35;
+            const three_out = s.threes_pct > 0 && (s.threes_pct < 20 || s.threes_pct > 35);
+            const to_high = s.to > 3.0;
+            const rpg_high = (s.pos === 'big' && s.rpg > 6.0);
+            const ast_to_concern = s.ast_to_ratio < 0.8;  // Low AST/TO is bad
+            const ast_to_good = s.ast_to_ratio >= 1.0;     // AST/TO >= 1.0 is good
+            const pps_low = s.pps < 1.0;
+            const pps_high = s.pps >= 1.6;
+            
+            return `
+                <tr>
+                    <td><strong>${player}</strong></td>
+                    <td>${s.games}</td>
+                    <td><strong>${s.ppg.toFixed(1)}</strong></td>
+                    <td>${s.fga.toFixed(1)}</td>
+                    <td style="background: ${fg_low ? '#fee2e2' : 'transparent'}; font-weight: ${fg_low ? 'bold' : 'normal'};">${s.fg_pct.toFixed(1)}%</td>
+                    <td style="background: ${three_out ? '#fef3c7' : 'transparent'}; font-weight: ${three_out ? 'bold' : 'normal'};">${s.threes_pct > 0 ? s.threes_pct.toFixed(1) : '0.0'}%</td>
+                    <td style="background: ${pps_low ? '#fee2e2' : (pps_high ? '#d1fae5' : 'transparent')}; font-weight: ${pps_low || pps_high ? 'bold' : 'normal'};">${s.pps.toFixed(1)}</td>
+                    <td style="background: ${rpg_high ? '#d1fae5' : 'transparent'}; font-weight: ${rpg_high ? 'bold' : 'normal'};">${s.rpg.toFixed(1)}</td>
+                    <td>${s.ast.toFixed(1)}</td>
+                    <td style="background: ${to_high ? '#fee2e2' : 'transparent'}; font-weight: ${to_high ? 'bold' : 'normal'};">${s.to.toFixed(1)}</td>
+                    <td>${s.stl.toFixed(1)}</td>
+                    <td style="background: ${ast_to_concern ? '#fee2e2' : (ast_to_good ? '#d1fae5' : 'transparent')}; font-weight: ${ast_to_concern || ast_to_good ? 'bold' : 'normal'};">${s.ast_to_ratio.toFixed(1)}</td>
+                    <td>${s.ast_stl_to_ratio.toFixed(1)}</td>
+                </tr>
+            `;
+        }).join('');
+        
+        document.getElementById('statsTableBody').innerHTML = statsTableHTML;
+        
+        // Generate insights
+        const insights = [];
+        
+        // High performers
+        const highPPS = Object.keys(seasonStats).filter(p => seasonStats[p].pps >= 1.6).sort((a,b) => seasonStats[b].pps - seasonStats[a].pps);
+        if (highPPS.length > 0) {
+            insights.push(`
+                <div class="insight-item success">
+                    <h4>✅ Most Efficient Scorers (PPS ≥ 1.6)</h4>
+                    <p><strong>${highPPS.map(p => `${p} (${seasonStats[p].pps.toFixed(1)})`).join(', ')}</strong> - Excellent point production per shot attempt. These players maximize offensive possessions.</p>
+                </div>
+            `);
+        }
+        
+        // Shooting concerns
+        const lowFG = Object.keys(seasonStats).filter(p => seasonStats[p].fg_pct < 35);
+        if (lowFG.length > 0) {
+            insights.push(`
+                <div class="insight-item critical">
+                    <h4>🚨 Shooting Efficiency Concerns (FG% < 35%)</h4>
+                    <p><strong>${lowFG.map(p => `${p} (${seasonStats[p].fg_pct.toFixed(1)}%)`).join(', ')}</strong> - Below acceptable shooting percentages. Focus on shot selection and mechanics.</p>
+                </div>
+            `);
+        }
+        
+        // Three-point shooting out of range
+        const threeOut = Object.keys(seasonStats).filter(p => seasonStats[p].threes_pct > 0 && (seasonStats[p].threes_pct < 20 || seasonStats[p].threes_pct > 35));
+        if (threeOut.length > 0) {
+            insights.push(`
+                <div class="insight-item">
+                    <h4>⚠️ Three-Point Shooting Outside Target Range (20-35%)</h4>
+                    <p><strong>${threeOut.map(p => `${p} (${seasonStats[p].threes_pct.toFixed(1)}%)`).join(', ')}</strong> - Either struggling with consistency or attempting too few threes to establish reliable percentage.</p>
+                </div>
+            `);
+        }
+        
+        // High turnovers
+        const highTO = Object.keys(seasonStats).filter(p => seasonStats[p].to > 3.0);
+        if (highTO.length > 0) {
+            insights.push(`
+                <div class="insight-item critical">
+                    <h4>🚨 Ball Security Issues (TO > 3.0)</h4>
+                    <p><strong>${highTO.map(p => `${p} (${seasonStats[p].to.toFixed(1)} TO/game)`).join(', ')}</strong> - High turnover rates impacting offensive efficiency. Need improved decision-making and ball handling.</p>
+                </div>
+            `);
+        }
+        
+        // Good playmaking ratios
+        const goodRatio = Object.keys(seasonStats).filter(p => seasonStats[p].pos === 'guard' && seasonStats[p].ast_to_ratio >= 1.0);
+        if (goodRatio.length > 0) {
+            insights.push(`
+                <div class="insight-item success">
+                    <h4>✅ Excellent Ball Security (Guards with AST/TO ≥ 1.0)</h4>
+                    <p><strong>${goodRatio.map(p => `${p} (${seasonStats[p].ast_to_ratio.toFixed(1)})`).join(', ')}</strong> - More assists than turnovers. Solid playmaking and decision-making.</p>
+                </div>
+            `);
+        }
+        
+        // Rebounding excellence
+        const goodReb = Object.keys(seasonStats).filter(p => seasonStats[p].pos === 'big' && seasonStats[p].rpg > 6.0);
+        if (goodReb.length > 0) {
+            insights.push(`
+                <div class="insight-item success">
+                    <h4>✅ Strong Rebounding (Bigs with RPG > 6.0)</h4>
+                    <p><strong>${goodReb.map(p => `${p} (${seasonStats[p].rpg.toFixed(1)} RPG)`).join(', ')}</strong> - Dominating the glass. Critical for second-chance opportunities and defensive stops.</p>
+                </div>
+            `);
+        }
+        
+        document.getElementById('statsInsights').innerHTML = insights.join('');
+    </script>
+</body>
+</html>
