@@ -143,7 +143,16 @@
             grid-template-columns: 2fr 1fr 1fr;
             grid-template-rows: 280px 280px;
             gap: 0.75rem;
+            grid-template-areas:
+                "big a b"
+                "big c d";
         }
+
+        .bp-gallery-item:nth-child(1) { grid-area: big; }
+        .bp-gallery-item:nth-child(2) { grid-area: a; }
+        .bp-gallery-item:nth-child(3) { grid-area: b; }
+        .bp-gallery-item:nth-child(4) { grid-area: c; }
+        .bp-gallery-item:nth-child(5) { grid-area: d; }
 
         .bp-gallery-item {
             overflow: hidden;
@@ -160,7 +169,7 @@
         }
 
         .bp-gallery-item:hover img { transform: scale(1.05); filter: grayscale(0%); }
-        .bp-gallery-item:first-child { grid-row: 1 / 3; }
+
 
         .bp-gallery-caption {
             position: absolute;
@@ -547,10 +556,6 @@
         <div class="bp-gallery-item">
             <img src="images/DSC4320.jpg" alt="Player development drill">
             <div class="bp-gallery-caption"><span>Development</span></div>
-        </div>
-        <div class="bp-gallery-item">
-            <img src="images/DSC4337.jpg" alt="Marc mentoring young players">
-            <div class="bp-gallery-caption"><span>Mentorship</span></div>
         </div>
     </div>
 </section>
