@@ -964,7 +964,7 @@
 <section id="contact">
     <p class="section-label fade-in">Get in Touch</p>
     <h2 class="section-title fade-in">Let's Work Together</h2>
-    <a href="/cdn-cgi/l/email-protection#8ae7ebf8e9f8e3e8ebf9bdcaede7ebe3e6a4e9e5e7" class="contact-email fade-in"><span class="__cf_email__" data-cfemail="660b071405140f0407155126010b070f0a4805090b">[email&#160;protected]</span></a>
+    <a href="mailto:marcribas7@gmail.com" class="contact-email fade-in">marcribas7@gmail.com</a>
     <div class="contact-links fade-in">
         <a href="tel:+34673089052">+34 673 089 052</a>
         <a href="https://www.linkedin.com/in/marcribasvilanova/" target="_blank">LinkedIn</a>
@@ -977,7 +977,16 @@
     <p>© 2026 Marc Ribas Vilanova. All rights reserved.</p>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    // Scroll fade-in animation
+<script>
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
