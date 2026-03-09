@@ -56,7 +56,6 @@
         }
 
         .nav-logo span { color: var(--accent); }
-
         .nav-links { display: flex; gap: 2rem; }
 
         .nav-links a {
@@ -103,10 +102,7 @@
             margin-bottom: 0.5rem;
         }
 
-        .bp-hero-text h1 em {
-            font-style: italic;
-            color: var(--accent);
-        }
+        .bp-hero-text h1 em { font-style: italic; color: var(--accent); }
 
         .bp-hero-subtitle {
             font-size: 1rem;
@@ -140,9 +136,7 @@
         }
 
         /* ── GALLERY ── */
-        #bp-gallery {
-            border-top: 1px solid var(--border);
-        }
+        #bp-gallery { border-top: 1px solid var(--border); }
 
         .bp-gallery-grid {
             display: grid;
@@ -165,20 +159,12 @@
             filter: grayscale(15%);
         }
 
-        .bp-gallery-item:hover img {
-            transform: scale(1.05);
-            filter: grayscale(0%);
-        }
-
-        .bp-gallery-item:first-child {
-            grid-row: 1 / 3;
-        }
+        .bp-gallery-item:hover img { transform: scale(1.05); filter: grayscale(0%); }
+        .bp-gallery-item:first-child { grid-row: 1 / 3; }
 
         .bp-gallery-caption {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             padding: 1.25rem;
             background: linear-gradient(transparent, rgba(0,0,0,0.7));
             opacity: 0;
@@ -195,9 +181,7 @@
         }
 
         /* ── SECTIONS ── */
-        section {
-            padding: 6rem 4rem;
-        }
+        section { padding: 6rem 4rem; }
 
         .section-label {
             font-size: 0.7rem;
@@ -238,46 +222,25 @@
             overflow: hidden;
         }
 
-        .philosophy-card:hover {
-            border-color: var(--accent-dim);
-            transform: translateY(-2px);
-        }
+        .philosophy-card:hover { border-color: var(--accent-dim); transform: translateY(-2px); }
 
         .philosophy-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 3px;
-            height: 100%;
+            top: 0; left: 0;
+            width: 3px; height: 100%;
             background: var(--accent);
             opacity: 0;
             transition: opacity 0.3s;
         }
 
         .philosophy-card:hover::before { opacity: 1; }
-
-        .philosophy-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .philosophy-card h3 {
-            font-family: var(--serif);
-            font-size: 1.15rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .philosophy-card p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
+        .philosophy-icon { font-size: 2rem; margin-bottom: 1rem; }
+        .philosophy-card h3 { font-family: var(--serif); font-size: 1.15rem; margin-bottom: 0.5rem; }
+        .philosophy-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
 
         /* ── PROGRAM ── */
-        #program {
-            border-top: 1px solid var(--border);
-        }
+        #program { border-top: 1px solid var(--border); }
 
         .program-grid {
             display: grid;
@@ -293,10 +256,7 @@
             transition: all 0.3s;
         }
 
-        .program-card:hover {
-            border-color: var(--accent-dim);
-            transform: translateY(-2px);
-        }
+        .program-card:hover { border-color: var(--accent-dim); transform: translateY(-2px); }
 
         .program-label {
             font-size: 0.65rem;
@@ -307,17 +267,8 @@
             font-weight: 500;
         }
 
-        .program-card h3 {
-            font-family: var(--serif);
-            font-size: 1.15rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .program-card p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
+        .program-card h3 { font-family: var(--serif); font-size: 1.15rem; margin-bottom: 0.5rem; }
+        .program-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
 
         /* ── AUDIENCE ── */
         #audience {
@@ -333,11 +284,7 @@
             margin-bottom: 2rem;
         }
 
-        .audience-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
+        .audience-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
         .audience-tag {
             padding: 0.5rem 1.2rem;
@@ -348,10 +295,7 @@
             letter-spacing: 0.03em;
         }
 
-        .audience-tag.accent {
-            border-color: var(--accent-dim);
-            color: var(--accent);
-        }
+        .audience-tag.accent { border-color: var(--accent-dim); color: var(--accent); }
 
         /* ── CTA ── */
         #cta {
@@ -368,10 +312,7 @@
             line-height: 1.1;
         }
 
-        .cta-heading em {
-            font-style: italic;
-            color: var(--accent);
-        }
+        .cta-heading em { font-style: italic; color: var(--accent); }
 
         .cta-sub {
             font-size: 0.95rem;
@@ -381,6 +322,14 @@
             margin-left: auto;
             margin-right: auto;
             line-height: 1.7;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .cta-btn {
@@ -399,15 +348,27 @@
             transition: all 0.3s;
         }
 
-        .cta-btn:hover {
-            background: var(--text);
-            transform: translateY(-1px);
+        .cta-btn:hover { background: var(--text); transform: translateY(-1px); }
+        .cta-btn svg { width: 16px; height: 16px; }
+
+        .cta-btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.9rem 2rem;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border-radius: 2px;
+            transition: all 0.3s;
         }
 
-        .cta-btn svg {
-            width: 16px;
-            height: 16px;
-        }
+        .cta-btn-outline:hover { background: var(--accent); color: var(--bg); transform: translateY(-1px); }
+        .cta-btn-outline svg { width: 16px; height: 16px; }
 
         .cta-back {
             display: block;
@@ -432,18 +393,6 @@
             letter-spacing: 0.05em;
         }
 
-        /* ── ANIMATIONS ── */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
         /* ── RESPONSIVE ── */
         @media (max-width: 1024px) {
             .bp-hero { grid-template-columns: 1fr; padding: 8rem 2rem 4rem; }
@@ -463,6 +412,7 @@
             .bp-hero { padding: 7rem 1.5rem 3rem; }
             .bp-gallery-grid { grid-template-columns: 1fr; grid-template-rows: repeat(5, 250px); }
             #cta { padding: 5rem 1.5rem; }
+            .cta-buttons { flex-direction: column; }
         }
     </style>
 </head>
@@ -481,7 +431,7 @@
 
 <!-- HERO -->
 <section class="bp-hero">
-    <div class="bp-hero-text fade-in">
+    <div class="bp-hero-text">
         <h1>Be Pro<br><em>Skills Camp</em></h1>
         <p class="bp-hero-subtitle">Founded by Marc Ribas Vilanova</p>
         <p class="bp-hero-desc">
@@ -490,30 +440,30 @@
             and the belief that greatness is built through deliberate, focused work.
         </p>
     </div>
-    <div class="bp-hero-logo fade-in">
+    <div class="bp-hero-logo">
         <img src="images/DSC4012.jpg" alt="Marc Ribas coaching at Be Pro Skills Camp">
     </div>
 </section>
 
 <!-- PHILOSOPHY -->
 <section id="philosophy">
-    <p class="section-label fade-in">Approach</p>
-    <h2 class="section-title fade-in">Training Philosophy</h2>
+    <p class="section-label">Approach</p>
+    <h2 class="section-title">Training Philosophy</h2>
     <div class="philosophy-grid">
-        <div class="philosophy-card fade-in">
+        <div class="philosophy-card">
             <div class="philosophy-icon">🎯</div>
             <h3>Individual Focus</h3>
             <p>Every player gets a personalized development plan. No two athletes are the same — training 
             shouldn't be either. We assess strengths, identify gaps, and build a roadmap for growth.</p>
         </div>
-        <div class="philosophy-card fade-in">
+        <div class="philosophy-card">
             <div class="philosophy-icon">📹</div>
             <h3>Video-Driven</h3>
             <p>Film sessions are a core part of the camp. Players learn to study their own game, understand 
             positioning, and develop basketball IQ through real footage analysis — the same tools used at the 
             professional level.</p>
         </div>
-        <div class="philosophy-card fade-in">
+        <div class="philosophy-card">
             <div class="philosophy-icon">🔁</div>
             <h3>Repetition & Detail</h3>
             <p>Skills are built through high-volume, intentional repetition. We break down every move 
@@ -524,28 +474,28 @@
 
 <!-- PROGRAM -->
 <section id="program">
-    <p class="section-label fade-in">What We Train</p>
-    <h2 class="section-title fade-in">Program Areas</h2>
+    <p class="section-label">What We Train</p>
+    <h2 class="section-title">Program Areas</h2>
     <div class="program-grid">
-        <div class="program-card fade-in">
+        <div class="program-card">
             <p class="program-label">On-Court</p>
             <h3>Ball Handling & Finishing</h3>
             <p>Advanced dribbling patterns, change of pace, contact finishes, and floater progressions. 
             Building confidence with the ball under pressure.</p>
         </div>
-        <div class="program-card fade-in">
+        <div class="program-card">
             <p class="program-label">On-Court</p>
             <h3>Shooting Mechanics</h3>
             <p>Form correction, catch-and-shoot rhythm, off-the-dribble shooting, and range extension. 
             Every rep with purpose and feedback.</p>
         </div>
-        <div class="program-card fade-in">
+        <div class="program-card">
             <p class="program-label">On-Court</p>
             <h3>Footwork & Positioning</h3>
             <p>Offensive and defensive footwork drills, post moves, pivoting, closeout technique, 
             and spatial awareness on both ends of the floor.</p>
         </div>
-        <div class="program-card fade-in">
+        <div class="program-card">
             <p class="program-label">Off-Court</p>
             <h3>Basketball IQ & Film</h3>
             <p>Video sessions to develop reading ability, decision-making, and understanding of professional-level 
@@ -556,15 +506,15 @@
 
 <!-- AUDIENCE -->
 <section id="audience">
-    <p class="section-label fade-in">Who It's For</p>
-    <h2 class="section-title fade-in">Built for Young Players</h2>
-    <p class="audience-text fade-in">
+    <p class="section-label">Who It's For</p>
+    <h2 class="section-title">Built for Young Players</h2>
+    <p class="audience-text">
         Be Pro is designed for youth and development-age basketball players in Spain who are serious 
         about improving their individual game. Whether you're trying to make a competitive team, 
         earn a scholarship, or simply want to reach the next level — this camp is for players who 
         are ready to put in the work.
     </p>
-    <div class="audience-tags fade-in">
+    <div class="audience-tags">
         <span class="audience-tag accent">Youth Players</span>
         <span class="audience-tag accent">Development Age</span>
         <span class="audience-tag">Competitive Mindset</span>
@@ -575,30 +525,30 @@
 
 <!-- GALLERY -->
 <section id="bp-gallery">
-    <p class="section-label fade-in">Camp Life</p>
-    <h2 class="section-title fade-in">On the Court</h2>
+    <p class="section-label">Camp Life</p>
+    <h2 class="section-title">On the Court</h2>
     <div class="bp-gallery-grid">
-        <div class="bp-gallery-item fade-in">
+        <div class="bp-gallery-item">
             <img src="images/DSC4097.jpg" alt="Be Pro coaching session">
             <div class="bp-gallery-caption"><span>Coaching</span></div>
         </div>
-        <div class="bp-gallery-item fade-in">
+        <div class="bp-gallery-item">
             <img src="images/DSC4121.jpg" alt="Player training at Be Pro">
             <div class="bp-gallery-caption"><span>Skills Training</span></div>
         </div>
-        <div class="bp-gallery-item fade-in">
+        <div class="bp-gallery-item">
             <img src="images/DSC3316.jpg" alt="Young players at Be Pro camp">
             <div class="bp-gallery-caption"><span>Camp Session</span></div>
         </div>
-        <div class="bp-gallery-item fade-in">
+        <div class="bp-gallery-item">
             <img src="images/DSC4295.JPG" alt="Coaches demonstrating on court">
             <div class="bp-gallery-caption"><span>Demonstration</span></div>
         </div>
-        <div class="bp-gallery-item fade-in">
+        <div class="bp-gallery-item">
             <img src="images/DSC4320.jpg" alt="Player development drill">
             <div class="bp-gallery-caption"><span>Development</span></div>
         </div>
-        <div class="bp-gallery-item fade-in">
+        <div class="bp-gallery-item">
             <img src="images/DSC4337.jpg" alt="Marc mentoring young players">
             <div class="bp-gallery-caption"><span>Mentorship</span></div>
         </div>
@@ -607,34 +557,28 @@
 
 <!-- CTA -->
 <section id="cta">
-    <p class="section-label fade-in">Get Started</p>
-    <h2 class="cta-heading fade-in">Ready to <em>Be Pro</em>?</h2>
-    <p class="cta-sub fade-in">
+    <p class="section-label">Get Started</p>
+    <h2 class="cta-heading">Ready to <em>Be Pro</em>?</h2>
+    <p class="cta-sub">
         Get in touch to learn more about upcoming camp dates, locations, and how to sign up.
     </p>
-    <a href="mailto:beprobasquet@gmail.com" class="cta-btn fade-in">
-        Contact us
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
-    </a>
-    <a href="index.html" class="cta-back fade-in">← Back to Portfolio</a>
+    <div class="cta-buttons">
+        <a href="mailto:beprobasquet@gmail.com" class="cta-btn">
+            Contact us
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+        </a>
+        <a href="https://www.instagram.com/beprobasket/" target="_blank" class="cta-btn-outline">
+            Instagram
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        </a>
+    </div>
+    <a href="index.html" class="cta-back">← Back to Portfolio</a>
 </section>
 
 <!-- FOOTER -->
 <footer>
     <p>© 2026 Marc Ribas Vilanova. All rights reserved.</p>
 </footer>
-
-<script>
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-</script>
 
 </body>
 </html>
