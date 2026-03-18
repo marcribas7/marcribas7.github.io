@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rebound Rate Scatter — 2026 NCAA Women's March Madness</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #f5f3ef;
+    color: #1a1a1a;
+    font-family: 'Barlow', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page-header {
+    background: #1d3557;
+    color: #fff;
+    padding: 28px 48px 22px;
+    position: relative;
+  }
+  .page-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: #e63946;
+  }
+  .header-row {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .page-header h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 38px;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .page-header h1 .thin { font-weight: 400; opacity: 0.5; font-size: 24px; }
+  .page-header .sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    opacity: 0.4;
+    margin-top: 4px;
+  }
+  .tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: #e63946;
+    padding: 5px 14px;
+    color: #fff;
+  }
+
+  .controls {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    padding: 16px 48px;
+    background: #fff;
+    border-bottom: 1px solid #e0ddd8;
+    align-items: center;
+  }
+  .controls label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #999;
+    margin-right: 4px;
+  }
+  .pill {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 7px 16px;
+    border: 2px solid #e0ddd8;
+    background: transparent;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .pill:hover { border-color: #1d3557; color: #1d3557; }
+  .pill.active { background: #1d3557; color: #fff; border-color: #1d3557; }
+
+  .chart-wrapper { padding: 24px 48px 40px; }
+
+  .legend {
+    display: flex; gap: 24px; align-items: center;
+    margin-bottom: 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #999;
+  }
+  .legend-dot {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .chart-container {
+    position: relative;
+    background: #fff;
+    border: 1px solid #e0ddd8;
+  }
+  canvas { display: block; }
+
+  .tooltip {
+    position: fixed;
+    background: #1d3557;
+    color: #fff;
+    padding: 10px 14px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 100;
+    display: none;
+    border-radius: 2px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  }
+  .tooltip .tt-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+  }
+  .tooltip .tt-region {
+    font-size: 10px;
+    opacity: 0.45;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+  }
+  .tooltip .tt-val { font-weight: 400; line-height: 1.6; }
+
+  .footer {
+    padding: 12px 48px;
+    text-align: right;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #bbb;
+  }
+
+  @media (max-width: 768px) {
+    .page-header, .controls, .chart-wrapper, .footer { padding-left: 16px; padding-right: 16px; }
+    .page-header h1 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="header-row">
+    <div>
+      <h1>ORB% vs DRB% SCATTER<br><span class="thin">NCAA WOMEN'S MARCH MADNESS 2026</span></h1>
+      <div class="sub">68 Teams • Offensive vs Defensive Rebound % • Data: InStat</div>
+    </div>
+    <span class="tag">2025–26 Season</span>
+  </div>
+</div>
+
+<div class="controls">
+  <label>Region</label>
+  <button class="pill active" data-region="all" onclick="setRegion('all')">All 68</button>
+  <button class="pill" data-region="FORT WORTH 1" onclick="setRegion('FORT WORTH 1')">Fort Worth 1</button>
+  <button class="pill" data-region="SACRAMENTO 2" onclick="setRegion('SACRAMENTO 2')">Sacramento 2</button>
+  <button class="pill" data-region="FORT WORTH 3" onclick="setRegion('FORT WORTH 3')">Fort Worth 3</button>
+  <button class="pill" data-region="SACRAMENTO 4" onclick="setRegion('SACRAMENTO 4')">Sacramento 4</button>
+</div>
+
+<div class="chart-wrapper">
+  <div class="legend">
+    <div><span class="legend-dot" style="background:#2d936c"></span>TR% ≥ 53%  (Elite)</div>
+    <div><span class="legend-dot" style="background:#f0b429"></span>TR% 50–53%  (Positive)</div>
+    <div><span class="legend-dot" style="background:#e63946"></span>TR% &lt; 50%  (Negative)</div>
+  </div>
+  <div class="chart-container">
+    <canvas id="scatterCanvas"></canvas>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip">
+  <div class="tt-region"></div>
+  <div class="tt-name"></div>
+  <div class="tt-val"></div>
+</div>
+
+<div class="footer">Generated by Marc Ribas Vilanova</div>
+
+<script>
+const DATA = [{"name":"UConn","region":"FORT WORTH 1","espn_id":41,"orb_pct":31.3,"drb_pct":74.2,"tr_pct":54.3,"orb_pg":9.3,"drb_pg":23.9},{"name":"UTSA","region":"FORT WORTH 1","espn_id":2636,"orb_pct":43.2,"drb_pct":69.8,"tr_pct":56.4,"orb_pg":10.4,"drb_pg":24.4},{"name":"Iowa St.","region":"FORT WORTH 1","espn_id":66,"orb_pct":25.8,"drb_pct":77.3,"tr_pct":53.8,"orb_pg":8.5,"drb_pg":25.5},{"name":"Syracuse","region":"FORT WORTH 1","espn_id":183,"orb_pct":37.2,"drb_pct":64.2,"tr_pct":50.5,"orb_pg":14.2,"drb_pg":22.8},{"name":"Maryland","region":"FORT WORTH 1","espn_id":120,"orb_pct":38.7,"drb_pct":70.8,"tr_pct":55.5,"orb_pg":13.1,"drb_pg":24},{"name":"Murray St.","region":"FORT WORTH 1","espn_id":93,"orb_pct":30.0,"drb_pct":76.0,"tr_pct":52.5,"orb_pg":10.1,"drb_pg":26.1},{"name":"North Carolina","region":"FORT WORTH 1","espn_id":153,"orb_pct":31.0,"drb_pct":72.1,"tr_pct":51.7,"orb_pg":10,"drb_pg":24.4},{"name":"Western Illinois","region":"FORT WORTH 1","espn_id":2710,"orb_pct":29.2,"drb_pct":69.7,"tr_pct":50.8,"orb_pg":8,"drb_pg":25.3},{"name":"Notre Dame","region":"FORT WORTH 1","espn_id":87,"orb_pct":35.0,"drb_pct":72.6,"tr_pct":55.2,"orb_pg":8.7,"drb_pg":21.7},{"name":"Fairfield","region":"FORT WORTH 1","espn_id":2223,"orb_pct":28.9,"drb_pct":74.5,"tr_pct":51.6,"orb_pg":7.8,"drb_pg":20.6},{"name":"Ohio St.","region":"FORT WORTH 1","espn_id":194,"orb_pct":29.4,"drb_pct":68.8,"tr_pct":48.4,"orb_pg":10.2,"drb_pg":22.9},{"name":"Howard","region":"FORT WORTH 1","espn_id":47,"orb_pct":35.2,"drb_pct":66.4,"tr_pct":50.5,"orb_pg":10.6,"drb_pg":23.1},{"name":"Illinois","region":"FORT WORTH 1","espn_id":356,"orb_pct":30.0,"drb_pct":74.4,"tr_pct":52.8,"orb_pg":8.3,"drb_pg":22},{"name":"Colorado","region":"FORT WORTH 1","espn_id":38,"orb_pct":34.1,"drb_pct":73.6,"tr_pct":54.9,"orb_pg":10.4,"drb_pg":23.3},{"name":"Vanderbilt","region":"FORT WORTH 1","espn_id":238,"orb_pct":37.4,"drb_pct":64.6,"tr_pct":50.3,"orb_pg":11.2,"drb_pg":20.4},{"name":"High Point","region":"FORT WORTH 1","espn_id":2272,"orb_pct":23.6,"drb_pct":67.7,"tr_pct":46.6,"orb_pg":7.8,"drb_pg":24.4},{"name":"Nebraska","region":"FORT WORTH 1","espn_id":158,"orb_pct":33.5,"drb_pct":71.9,"tr_pct":53.3,"orb_pg":8.8,"drb_pg":20.9},{"name":"Richmond","region":"FORT WORTH 1","espn_id":257,"orb_pct":28.7,"drb_pct":70.5,"tr_pct":52.4,"orb_pg":7.5,"drb_pg":23.1},{"name":"UCLA","region":"SACRAMENTO 2","espn_id":26,"orb_pct":40.3,"drb_pct":73.0,"tr_pct":58.1,"orb_pg":11.8,"drb_pg":26.2},{"name":"Cal Baptist","region":"SACRAMENTO 2","espn_id":350,"orb_pct":24.2,"drb_pct":69.6,"tr_pct":47.9,"orb_pg":9,"drb_pg":27},{"name":"Oklahoma St.","region":"SACRAMENTO 2","espn_id":197,"orb_pct":33.3,"drb_pct":74.1,"tr_pct":54.4,"orb_pg":10.8,"drb_pg":22.7},{"name":"Princeton","region":"SACRAMENTO 2","espn_id":163,"orb_pct":34.4,"drb_pct":71.8,"tr_pct":54.1,"orb_pg":10.2,"drb_pg":20.6},{"name":"Ole Miss","region":"SACRAMENTO 2","espn_id":145,"orb_pct":41.3,"drb_pct":71.8,"tr_pct":55.2,"orb_pg":12.4,"drb_pg":23.3},{"name":"Gonzaga","region":"SACRAMENTO 2","espn_id":2250,"orb_pct":38.6,"drb_pct":73.2,"tr_pct":56.6,"orb_pg":10.8,"drb_pg":25.2},{"name":"Minnesota","region":"SACRAMENTO 2","espn_id":135,"orb_pct":33.2,"drb_pct":74.7,"tr_pct":53.4,"orb_pg":11.1,"drb_pg":24.2},{"name":"Green Bay","region":"SACRAMENTO 2","espn_id":2247,"orb_pct":29.1,"drb_pct":73.2,"tr_pct":51.3,"orb_pg":5.8,"drb_pg":25.1},{"name":"Baylor","region":"SACRAMENTO 2","espn_id":239,"orb_pct":36.0,"drb_pct":73.8,"tr_pct":54.8,"orb_pg":9.9,"drb_pg":25.5},{"name":"Duke","region":"SACRAMENTO 2","espn_id":150,"orb_pct":40.5,"drb_pct":70.7,"tr_pct":55.1,"orb_pg":11.8,"drb_pg":25.1},{"name":"Charleston","region":"SACRAMENTO 2","espn_id":232,"orb_pct":37.7,"drb_pct":67.8,"tr_pct":51.4,"orb_pg":13.6,"drb_pg":22.4},{"name":"Texas Tech","region":"SACRAMENTO 2","espn_id":2641,"orb_pct":35.0,"drb_pct":66.3,"tr_pct":50.3,"orb_pg":8.1,"drb_pg":22.3},{"name":"Villanova","region":"SACRAMENTO 2","espn_id":222,"orb_pct":24.6,"drb_pct":69.7,"tr_pct":46.7,"orb_pg":7.4,"drb_pg":23.8},{"name":"LSU","region":"SACRAMENTO 2","espn_id":99,"orb_pct":42.6,"drb_pct":70.4,"tr_pct":56.8,"orb_pg":15.3,"drb_pg":28.1},{"name":"Jacksonville","region":"SACRAMENTO 2","espn_id":2335,"orb_pct":34.4,"drb_pct":70.6,"tr_pct":51.5,"orb_pg":10.1,"drb_pg":24},{"name":"Texas","region":"FORT WORTH 3","espn_id":251,"orb_pct":42.0,"drb_pct":70.8,"tr_pct":55.9,"orb_pg":12.3,"drb_pg":21.9},{"name":"Missouri St.","region":"FORT WORTH 3","espn_id":2623,"orb_pct":33.4,"drb_pct":74.1,"tr_pct":53.4,"orb_pg":9.4,"drb_pg":25.2},{"name":"Stephen F. Austin","region":"FORT WORTH 3","espn_id":2617,"orb_pct":30.7,"drb_pct":68.1,"tr_pct":51.5,"orb_pg":9.1,"drb_pg":25.8},{"name":"Oregon","region":"FORT WORTH 3","espn_id":2483,"orb_pct":30.6,"drb_pct":69.6,"tr_pct":49.7,"orb_pg":8.3,"drb_pg":23},{"name":"Virginia Tech","region":"FORT WORTH 3","espn_id":259,"orb_pct":28.2,"drb_pct":70.6,"tr_pct":50.2,"orb_pg":11.5,"drb_pg":24.5},{"name":"Kentucky","region":"FORT WORTH 3","espn_id":96,"orb_pct":29.9,"drb_pct":69.5,"tr_pct":51.5,"orb_pg":11,"drb_pg":25.5},{"name":"James Madison","region":"FORT WORTH 3","espn_id":256,"orb_pct":32.3,"drb_pct":73.5,"tr_pct":53.9,"orb_pg":10.6,"drb_pg":26.4},{"name":"West Virginia","region":"FORT WORTH 3","espn_id":277,"orb_pct":36.3,"drb_pct":69.6,"tr_pct":52.2,"orb_pg":11.2,"drb_pg":21.5},{"name":"Miami (Ohio)","region":"FORT WORTH 3","espn_id":193,"orb_pct":27.4,"drb_pct":70.8,"tr_pct":49.2,"orb_pg":6.9,"drb_pg":21.9},{"name":"Alabama","region":"FORT WORTH 3","espn_id":333,"orb_pct":32.9,"drb_pct":68.7,"tr_pct":51.7,"orb_pg":8.2,"drb_pg":24.3},{"name":"Rhode Island","region":"FORT WORTH 3","espn_id":227,"orb_pct":37.8,"drb_pct":73.2,"tr_pct":54.6,"orb_pg":10.1,"drb_pg":24.1},{"name":"Louisville","region":"FORT WORTH 3","espn_id":97,"orb_pct":38.1,"drb_pct":69.0,"tr_pct":52.3,"orb_pg":11.9,"drb_pg":24.9},{"name":"Vermont","region":"FORT WORTH 3","espn_id":261,"orb_pct":27.1,"drb_pct":73.0,"tr_pct":51.2,"orb_pg":7.2,"drb_pg":22.4},{"name":"NC State","region":"FORT WORTH 3","espn_id":152,"orb_pct":30.5,"drb_pct":73.0,"tr_pct":52.3,"orb_pg":9.8,"drb_pg":28.5},{"name":"Tennessee","region":"FORT WORTH 3","espn_id":2633,"orb_pct":39.0,"drb_pct":68.3,"tr_pct":52.0,"orb_pg":13,"drb_pg":22.6},{"name":"Michigan","region":"FORT WORTH 3","espn_id":130,"orb_pct":33.7,"drb_pct":72.3,"tr_pct":52.9,"orb_pg":13,"drb_pg":23.3},{"name":"Holy Cross","region":"FORT WORTH 3","espn_id":107,"orb_pct":28.0,"drb_pct":75.4,"tr_pct":52.4,"orb_pg":7.4,"drb_pg":25},{"name":"Virginia","region":"FORT WORTH 3","espn_id":258,"orb_pct":31.2,"drb_pct":68.2,"tr_pct":50.4,"orb_pg":12.5,"drb_pg":25.2},{"name":"Arizona St.","region":"FORT WORTH 3","espn_id":9,"orb_pct":27.8,"drb_pct":68.3,"tr_pct":48.1,"orb_pg":8.3,"drb_pg":22.8},{"name":"South Carolina","region":"SACRAMENTO 4","espn_id":2579,"orb_pct":38.5,"drb_pct":69.7,"tr_pct":55.0,"orb_pg":11.3,"drb_pg":26.3},{"name":"Southern","region":"SACRAMENTO 4","espn_id":2582,"orb_pct":29.6,"drb_pct":66.6,"tr_pct":46.4,"orb_pg":11.2,"drb_pg":19.2},{"name":"Samford","region":"SACRAMENTO 4","espn_id":2534,"orb_pct":25.5,"drb_pct":62.9,"tr_pct":44.7,"orb_pg":6,"drb_pg":21.6},{"name":"Clemson","region":"SACRAMENTO 4","espn_id":228,"orb_pct":27.6,"drb_pct":73.5,"tr_pct":50.9,"orb_pg":9.3,"drb_pg":23.3},{"name":"USC","region":"SACRAMENTO 4","espn_id":30,"orb_pct":36.8,"drb_pct":73.1,"tr_pct":55.2,"orb_pg":10,"drb_pg":22.8},{"name":"Michigan St.","region":"SACRAMENTO 4","espn_id":127,"orb_pct":33.1,"drb_pct":69.3,"tr_pct":50.8,"orb_pg":10.4,"drb_pg":21.7},{"name":"Colorado St.","region":"SACRAMENTO 4","espn_id":36,"orb_pct":17.5,"drb_pct":72.5,"tr_pct":46.3,"orb_pg":6.5,"drb_pg":25},{"name":"Oklahoma","region":"SACRAMENTO 4","espn_id":201,"orb_pct":37.3,"drb_pct":75.7,"tr_pct":57.5,"orb_pg":13.8,"drb_pg":29.2},{"name":"Idaho","region":"SACRAMENTO 4","espn_id":70,"orb_pct":31.2,"drb_pct":74.9,"tr_pct":53.3,"orb_pg":13.2,"drb_pg":28.5},{"name":"Washington","region":"SACRAMENTO 4","espn_id":264,"orb_pct":32.9,"drb_pct":68.6,"tr_pct":52.1,"orb_pg":10.9,"drb_pg":24.7},{"name":"South Dakota St.","region":"SACRAMENTO 4","espn_id":2571,"orb_pct":29.0,"drb_pct":77.6,"tr_pct":55.2,"orb_pg":8.4,"drb_pg":26.4},{"name":"TCU","region":"SACRAMENTO 4","espn_id":2628,"orb_pct":33.4,"drb_pct":74.1,"tr_pct":55.6,"orb_pg":9.1,"drb_pg":27.7},{"name":"UC San Diego","region":"SACRAMENTO 4","espn_id":5765,"orb_pct":28.4,"drb_pct":70.5,"tr_pct":48.6,"orb_pg":7.5,"drb_pg":22.8},{"name":"Georgia","region":"SACRAMENTO 4","espn_id":61,"orb_pct":32.2,"drb_pct":70.2,"tr_pct":50.9,"orb_pg":8.5,"drb_pg":24.4},{"name":"Iowa","region":"SACRAMENTO 4","espn_id":2294,"orb_pct":30.9,"drb_pct":74.6,"tr_pct":54.1,"orb_pg":8.1,"drb_pg":25.8},{"name":"FDU","region":"SACRAMENTO 4","espn_id":2230,"orb_pct":33.4,"drb_pct":71.3,"tr_pct":52.3,"orb_pg":12.3,"drb_pg":24.6}];
+
+let currentRegion = 'all';
+let logoImages = {};
+let logoLoadCount = 0;
+let allLoaded = false;
+
+function preloadLogos() {
+  let total = DATA.length;
+  DATA.forEach(t => {
+    if (t.espn_id) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => { logoImages[t.name] = img; logoLoadCount++; checkDone(total); };
+      img.onerror = () => { logoLoadCount++; checkDone(total); };
+      img.src = `https://a.espncdn.com/i/teamlogos/ncaa/500/${t.espn_id}.png`;
+    } else {
+      logoLoadCount++;
+      checkDone(total);
+    }
+  });
+}
+
+function checkDone(total) {
+  if (logoLoadCount >= total && !allLoaded) {
+    allLoaded = true;
+    render();
+  }
+}
+
+function getFiltered() {
+  let teams = DATA.filter(t => t.orb_pct != null && t.drb_pct != null);
+  if (currentRegion !== 'all') teams = teams.filter(t => t.region === currentRegion);
+  return teams;
+}
+
+function setRegion(r) {
+  currentRegion = r;
+  document.querySelectorAll('[data-region]').forEach(b => b.classList.toggle('active', b.dataset.region === r));
+  render();
+}
+
+function trColor(tr) {
+  if (tr >= 53) return '#2d936c';
+  if (tr >= 50) return '#f0b429';
+  return '#e63946';
+}
+
+function render() {
+  const canvas = document.getElementById('scatterCanvas');
+  const ctx = canvas.getContext('2d');
+  const teams = getFiltered();
+
+  const dpr = window.devicePixelRatio || 1;
+  const containerW = canvas.parentElement.clientWidth;
+  const h = Math.min(620, containerW * 0.6);
+
+  canvas.width = containerW * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = containerW + 'px';
+  canvas.style.height = h + 'px';
+  ctx.scale(dpr, dpr);
+
+  // BG
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, containerW, h);
+
+  const pad = { top: 40, bottom: 56, left: 64, right: 36 };
+  const cw = containerW - pad.left - pad.right;
+  const ch = h - pad.top - pad.bottom;
+
+  // Ranges
+  const orbVals = teams.map(t => t.orb_pct);
+  const drbVals = teams.map(t => t.drb_pct);
+  const orbMin = Math.floor(Math.min(...orbVals) - 2);
+  const orbMax = Math.ceil(Math.max(...orbVals) + 2);
+  const drbMin = Math.floor(Math.min(...drbVals) - 2);
+  const drbMax = Math.ceil(Math.max(...drbVals) + 2);
+
+  function xS(v) { return pad.left + ((v - orbMin) / (orbMax - orbMin)) * cw; }
+  function yS(v) { return pad.top + ch - ((v - drbMin) / (drbMax - drbMin)) * ch; }
+
+  // Grid
+  ctx.strokeStyle = '#f0eeea';
+  ctx.lineWidth = 1;
+  for (let x = Math.ceil(orbMin / 2) * 2; x <= orbMax; x += 2) {
+    ctx.beginPath(); ctx.moveTo(xS(x), pad.top); ctx.lineTo(xS(x), pad.top + ch); ctx.stroke();
+    ctx.fillStyle = '#bbb';
+    ctx.font = '500 11px Barlow Condensed';
+    ctx.textAlign = 'center';
+    ctx.fillText(x + '%', xS(x), h - pad.bottom + 18);
+  }
+  for (let y = Math.ceil(drbMin / 2) * 2; y <= drbMax; y += 2) {
+    ctx.beginPath(); ctx.moveTo(pad.left, yS(y)); ctx.lineTo(pad.left + cw, yS(y)); ctx.stroke();
+    ctx.fillStyle = '#bbb';
+    ctx.font = '500 11px Barlow Condensed';
+    ctx.textAlign = 'right';
+    ctx.fillText(y + '%', pad.left - 8, yS(y) + 4);
+  }
+
+  // Median lines
+  const sortedOrb = [...orbVals].sort((a,b) => a - b);
+  const sortedDrb = [...drbVals].sort((a,b) => a - b);
+  const medOrb = sortedOrb[Math.floor(sortedOrb.length / 2)];
+  const medDrb = sortedDrb[Math.floor(sortedDrb.length / 2)];
+
+  ctx.strokeStyle = '#f0b429';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([8, 5]);
+  ctx.beginPath(); ctx.moveTo(xS(medOrb), pad.top); ctx.lineTo(xS(medOrb), pad.top + ch); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad.left, yS(medDrb)); ctx.lineTo(pad.left + cw, yS(medDrb)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Quadrant labels with TR% context
+  ctx.textAlign = 'center';
+  const qCenters = [
+    { label: 'GLASS CLEANERS (DEF)', sub: 'High DRB% · Low ORB%', x: xS(orbMin + (medOrb - orbMin) / 2), y: yS(drbMax) + ch * 0.12 },
+    { label: 'ELITE BOTH BOARDS', sub: 'High DRB% · High ORB%', x: xS(medOrb + (orbMax - medOrb) / 2), y: yS(drbMax) + ch * 0.12 },
+    { label: 'WEAK BOARDS', sub: 'Low DRB% · Low ORB%', x: xS(orbMin + (medOrb - orbMin) / 2), y: yS(drbMin) - ch * 0.08 },
+    { label: 'CRASHERS (OFF)', sub: 'Low DRB% · High ORB%', x: xS(medOrb + (orbMax - medOrb) / 2), y: yS(drbMin) - ch * 0.08 },
+  ];
+  qCenters.forEach(q => {
+    ctx.globalAlpha = 0.16;
+    ctx.fillStyle = '#1d3557';
+    ctx.font = '700 13px Barlow Condensed';
+    ctx.fillText(q.label, q.x, q.y);
+    ctx.font = '400 10px Barlow';
+    ctx.fillText(q.sub, q.x, q.y + 15);
+  });
+  ctx.globalAlpha = 1;
+
+  // Axis labels
+  ctx.fillStyle = '#999';
+  ctx.font = '600 12px Barlow Condensed';
+  ctx.textAlign = 'center';
+  ctx.fillText('OFFENSIVE REBOUND %  →', pad.left + cw / 2, h - 8);
+  ctx.save();
+  ctx.translate(16, pad.top + ch / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('↑  DEFENSIVE REBOUND %', 0, 0);
+  ctx.restore();
+
+  // Plot logos
+  const logoSize = teams.length <= 20 ? 34 : 28;
+  const half = logoSize / 2;
+  const positions = [];
+
+  // Sort by TR% so elite teams render on top
+  const sorted = [...teams].sort((a, b) => (a.tr_pct || 0) - (b.tr_pct || 0));
+
+  sorted.forEach(t => {
+    const px = xS(t.orb_pct);
+    const py = yS(t.drb_pct);
+    const col = trColor(t.tr_pct);
+
+    positions.push({ x: px, y: py, team: t, r: half + 3 });
+
+    if (logoImages[t.name]) {
+      // Colored ring
+      ctx.beginPath();
+      ctx.arc(px, py, half + 3, 0, Math.PI * 2);
+      ctx.fillStyle = col;
+      ctx.fill();
+
+      // White circle + logo
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(px, py, half + 1, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+      ctx.clip();
+      ctx.drawImage(logoImages[t.name], px - half, py - half, logoSize, logoSize);
+      ctx.restore();
+    } else {
+      // Fallback colored dot
+      ctx.beginPath();
+      ctx.arc(px, py, half, 0, Math.PI * 2);
+      ctx.fillStyle = col;
+      ctx.globalAlpha = 0.85;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = '#fff';
+      ctx.font = `700 ${Math.floor(logoSize * 0.35)}px Barlow Condensed`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const initials = t.name.split(/[\s.]+/).map(w => w[0]).join('').substring(0, 3).toUpperCase();
+      ctx.fillText(initials, px, py);
+    }
+  });
+
+  // Hover
+  canvas.onmousemove = function(e) {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    let found = null;
+    // Reverse so top-rendered (elite) gets priority
+    for (let i = positions.length - 1; i >= 0; i--) {
+      const p = positions[i];
+      if (Math.hypot(mx - p.x, my - p.y) < p.r) { found = p.team; break; }
+    }
+
+    const tt = document.getElementById('tooltip');
+    if (found) {
+      canvas.style.cursor = 'pointer';
+      tt.style.display = 'block';
+      tt.style.left = (e.clientX + 16) + 'px';
+      tt.style.top = (e.clientY - 8) + 'px';
+      tt.querySelector('.tt-name').textContent = found.name;
+      tt.querySelector('.tt-region').textContent = found.region;
+      tt.querySelector('.tt-val').innerHTML =
+        `TR%: <b>${found.tr_pct}%</b><br>ORB%: ${found.orb_pct}%<br>DRB%: ${found.drb_pct}%`;
+    } else {
+      canvas.style.cursor = 'default';
+      tt.style.display = 'none';
+    }
+  };
+  canvas.onmouseleave = () => { document.getElementById('tooltip').style.display = 'none'; };
+}
+
+preloadLogos();
+setTimeout(render, 300);
+window.addEventListener('resize', render);
+</script>
+</body>
+</html>
